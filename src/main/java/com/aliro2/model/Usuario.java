@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "UsuarioS")
+@Table(name = "Usuarios")
 public class Usuario {
 
     @Id // Marca este campo como la clave primaria.
