@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+    <h1>Panel de Técnico</h1>
+    <p>Funciones específicas para el personal técnico.</p>
+
+    <div class="row">
+        <div class="col">
+            <div class="card card-body">
+                <form th:action="@{/informes/visitantes}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Informes Visitantes</button>
+                </form>
+            </div>
+            <div class="card card-body">
+                <form th:action="@{/informes/llaves}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Informes Llaves</button>
+                </form>
+            </div>
+            <div class="card card-body">
+                <form th:action="@{/informes/llamadas}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Informes Llamadas</button>
+                </form>
+            </div>
+            <div class="card card-body">
+                <form th:action="@{/informes/incidencias}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Informes Incidencias</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

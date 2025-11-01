@@ -5,79 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso</title>
     <style>
-        /* --- Reseteo y Estilos Base --- */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
-        }
+        /* --- Tus estilos CSS se quedan igual --- */
+        body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; background-color: #ffffff; }
+        .header { width: 100%; padding: 10px 40px; background-color: #27DDF5; border-bottom: 1px solid #e7e7e7; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; position: absolute; top: 0; }
+        .header-logo img { height: 40px; }
+        .header-text { font-size: 12px; color: #6c757d; }
+        .main-container { display: flex; justify-content: center; align-items: center; height: 100%; }
+        .login-box { width: 300px; padding: 20px; border: 1px solid #ddd; background-color: #fff; }
+        .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; }
+        .login-box button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .login-box button:hover { background-color: #218838; }
 
-        /* --- Barra Superior (Header) --- */
-        .header {
-            width: 100%;
-            padding: 10px 40px;
-            background-color: #f8f9fa; /* Un gris muy claro */
-            border-bottom: 1px solid #e7e7e7;
+        /* --- NUEVO: Estilos para la casilla de mostrar contraseña --- */
+        .mostrar-clave-container {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            box-sizing: border-box;
-            position: absolute;
-            top: 0;
-        }
-
-        .header-logo img {
-            height: 40px; /* Ajusta la altura de tus logos */
-        }
-
-        .header-text {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        /* --- Contenedor Principal para Centrar --- */
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-
-        /* --- Caja de Login --- */
-        .login-box {
-            width: 300px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-        }
-
-        /* --- Campos de Texto --- */
-        .login-box input[type="text"],
-        .login-box input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
             font-size: 14px;
+            color: #555;
+            margin-top: -5px;
+            margin-bottom: 20px;
         }
-
-        /* --- Botón de Acceso --- */
-        .login-box button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745; /* Un verde similar al de la imagen */
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .login-box button:hover {
-            background-color: #218838; /* Un verde un poco más oscuro al pasar el ratón */
+        .mostrar-clave-container input {
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -85,29 +34,51 @@
 
 <header class="header">
     <div class="header-logo">
-        <img src="/logoitc.png" alt="Logo Instituto Tecnológico de Canarias">
+        <img th:src="@{/ICONOS/logoitc.png}" alt="Logo Instituto Tecnológico de Canarias">
     </div>
     <div class="header-text">
         Creado y desarrollado por GomBeth Software's en colaboración con Envera Empleo, S.L.U. para el Instituto Tecnológico de Canarias.
     </div>
     <div class="header-logo">
-        <img src="/Envera_Logo2018_FondoBlanco_(300pp).png" alt="Logo Envera">
+        <img th:src="@{/ICONOS/Envera_Logo2018_FondoBlanco_(300pp).png}" alt="Logo Envera">
     </div>
 </header>
 
 <div class="main-container">
     <div class="login-box">
         <form th:action="@{/login}" method="post">
-            <div th:if="${error}" style="color: red; text-align: center; margin-bottom: 10px;">
-                <p th:text="${error}"></p>
+            <div th:if="${param.error}" style="color: red; text-align: center; margin-bottom: 10px;">
+                <p>DNI o contraseña incorrectos</p>
             </div>
 
-            <input type="text" id="usuDni" name="usuDni" placeholder="Usuario" required>
-            <input type="password" id="usuClave" name="usuClave" placeholder="Contraseña" required>
+            <input type="text" id="username" name="username" placeholder="Usuario" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required autocomplete="new-password">
+
+            <div class="mostrar-clave-container">
+                <input type="checkbox" id="mostrarClave">
+                <label for="mostrarClave">Mostrar Contraseña</label>
+            </div>
+
             <button type="submit">Acceder</button>
         </form>
     </div>
 </div>
+
+<script>
+    // Espera a que el documento HTML se cargue completamente
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtiene referencias a la casilla y al campo de contraseña
+        const mostrarClaveCheckbox = document.getElementById('mostrarClave');
+        const claveInput = document.getElementById('password');
+
+        // Añade un "oyente" que se activa cuando cambia el estado de la casilla
+        mostrarClaveCheckbox.addEventListener('change', function () {
+            // Si la casilla está marcada, cambia el tipo del input a 'text'
+            // Si no está marcada, lo cambia de nuevo a 'password'
+            claveInput.type = this.checked ? 'text' : 'password';
+        });
+    });
+</script>
 
 </body>
 </html>

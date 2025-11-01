@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+
+    <style>
+        .user-info-bar {
+            background-color: #fff;
+            padding: 8px 40px;
+            border-bottom: 1px solid #e7e7e7;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            text-align: left;
+        }
+
+        .admin-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alinea arriba para que no se centre verticalmente */
+            padding-top: 50px;
+            background-color: #fff;
+            height: calc(100vh - 100px); /* Ajusta la altura si es necesario */
+        }
+
+        .form-box {
+            width: 350px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .form-box label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-box input, .form-box select, .form-box button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-box button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+
+    <div class="user-info-bar">
+        <span>INSTITUTO TECNOLOGICO DE CANARIAS, S.A. (TENERIFE) Usuario => </span>
+        <span th:text="|**${#strings.substring(usuarioLogueado.usuDni, 2, 4)}*${#strings.substring(usuarioLogueado.usuDni, 5, 6)}**${#strings.substring(usuarioLogueado.usuDni, 8, 9)}|"></span>
+        <span th:text="| ${usuarioLogueado.usuNombre}, ${usuarioLogueado.usuApellidoUno} ${usuarioLogueado.usuApellidoDos ?: ''}|"></span>
+    </div>
+
+    <div class="admin-container">
+        <div class="form-box">
+            <form th:action="@{/reportes/generar}" method="POST">
+
+                <label for="mesano">Mes y año para el informe</label>
+                <input type="month" id="mesano" name="mesano" required>
+
+                <label for="centro">de</label>
+                <select id="centro" name="centro" required>
+                    <option value="" disabled selected>----------------</option>
+                    <option value="1">Machado</option>
+                    <option value="2">Cebrián</option>
+                </select>
+
+                <button type="submit">Generar Informe</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

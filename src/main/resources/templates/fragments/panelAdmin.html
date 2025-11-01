@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+    <h1>Panel de Administración</h1>
+    <p>Generación de reportes mensuales.</p>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card card-body">
+                <form th:action="@{/reportes/generar}" method="POST" th:if="${usuarioLogueado.usuCentro == 1 or usuarioLogueado.usuCentro == 2}">
+                    <label for="mesano">Mes y año para el informe</label>
+                    <input type="month" name="mesano" id="mesano" class="form-control">
+
+                    <label for="sucursal">Sucursal</label>
+                    <input type="text" name="sucursal" list="opciones" class="form-control">
+                    <datalist id="opciones">
+                        <option value="1">Machado</option>
+                        <option value="2">Cebrián</option>
+                    </datalist>
+
+                    <button type="submit" class="btn btn-success btn-block mt-3">Generar Informe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

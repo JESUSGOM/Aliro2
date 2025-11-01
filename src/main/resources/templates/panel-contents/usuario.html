@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+
+    <style>
+        .user-info-bar {
+            background-color: #fff;
+            padding: 8px 40px;
+            border-bottom: 1px solid #e7e7e7;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            text-align: left;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Espacio entre las columnas */
+            padding: 20px 40px; /* Margen a los lados */
+            background-color: #e9ecef; /* Fondo gris claro como en la imagen */
+        }
+
+        .dashboard-column {
+            flex: 1; /* Cada columna ocupa el mismo espacio */
+            min-width: 300px; /* Ancho mínimo para responsividad */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Espacio entre los grupos de botones */
+        }
+
+        .button-group button {
+            width: 100%;
+            /* 1. El color de fondo ahora es el gris del borde */
+            background-color: #ccc;
+            /* 2. El texto ahora es negrita */
+            font-weight: bold;
+            color: #333; /* Mantenemos el color del texto oscuro para que sea legible */
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .button-group form {
+            margin: 0;
+        }
+
+        .button-group button {
+            width: 100%;
+            background-color: white;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .button-group button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+
+    <div class="user-info-bar">
+        <span>INSTITUTO TECNOLÓGICO DE CANARIAS, S.A. (LAS PALMAS) Usuario => </span>
+
+        <span th:text="|**${#strings.substring(usuarioLogueado.usuDni, 2, 4)}*${#strings.substring(usuarioLogueado.usuDni, 5, 6)}**${#strings.substring(usuarioLogueado.usuDni, 8, 9)}|"></span>
+
+        <span th:text="| ${usuarioLogueado.usuApellidoUno} ${usuarioLogueado.usuApellidoDos ?: ''}, ${usuarioLogueado.usuNombre}|"></span>
+
+        <span th:if="${usuarioLogueado.usuCargo}" th:text="| ${usuarioLogueado.usuCargo}|"></span>
+    </div>
+
+
+    <div class="dashboard-container">
+
+        <div class="dashboard-column">
+            <div class="button-group">
+                <form th:action="@{/visitas/entrada}" method="POST"><button type="submit">Entrada Visitantes</button></form>
+                <form th:action="@{/visitas/salida}" method="POST"><button type="submit">Salida Visitantes</button></form>
+                <form th:action="@{/visitas/informes}" method="POST"><button type="submit">Informes Visitantes</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/incidencias/entrada}" method="POST"><button type="submit">Entrada Incidencias</button></form>
+                <form th:action="@{/incidencias/consultar}" method="POST"><button type="submit">Consultar Incidencias</button></form>
+                <form th:action="@{/incidencias/informes}" method="POST"><button type="submit">Informes Incidencias</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/proveedores/crear}" method="POST"><button type="submit">Crear Proveedores</button></form>
+                <form th:action="@{/proveedores/consultar}" method="POST"><button type="submit">Consultar Proveedores</button></form>
+                <form th:action="@{/proveedores/modificar}" method="POST"><button type="submit">Modificar Proveedor</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/turnos/comunicar}" method="POST"><button type="submit">Comunico Siguiente Turno</button></form>
+            </div>
+        </div>
+
+        <div class="dashboard-column">
+            <div class="button-group">
+                <form th:action="@{/llaves/entrega}" method="POST"><button type="submit">Entrega de Llaves</button></form>
+                <form th:action="@{/llaves/recogida}" method="POST"><button type="submit">Recogida de Llaves</button></form>
+                <form th:action="@{/llaves/informes}" method="POST"><button type="submit">Informes de Llaves</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/email/enviar}" method="POST"><button type="submit">Enviar Un Correo Electrónico</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/empleados-proveedor/crear}" method="POST"><button type="submit">Crear Empleado en Proveedor</button></form>
+                <form th:action="@{/empleados-proveedor/consultar}" method="POST"><button type="submit">Consultar Empleado en Proveedor</button></form>
+                <form th:action="@{/empleados-proveedor/modificar}" method="POST"><button type="submit">Modificar Empleado en Proveedor</button></form>
+                <form th:action="@{/empleados-proveedor/eliminar}" method="POST"><button type="submit">Eliminar Empleado de Proveedor</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/turnos/leer}" method="POST"><button type="submit">Leer Comunicación Turno Anterior</button></form>
+            </div>
+        </div>
+
+        <div class="dashboard-column">
+            <div class="button-group">
+                <form th:action="@{/llamadas/nueva}" method="POST"><button type="submit">Llamadas Telefónicas</button></form>
+                <form th:action="@{/llamadas/comunicar}" method="POST"><button type="submit">Comunicar llamadas</button></form>
+                <form th:action="@{/llamadas/informes}" method="POST"><button type="submit">Informes Llamadas</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/correspondencia/nueva}" method="POST"><button type="submit">Correspondencia</button></form>
+                <form th:action="@{/correspondencia/entrega}" method="POST"><button type="submit">Entrego Correspondencia</button></form>
+                <form th:action="@{/correspondencia/informes}" method="POST"><button type="submit">Informes Correspondencia</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/movimientos-empleados/entrada}" method="POST"><button type="submit">Entrada Empleados de Proveedores</button></form>
+                <form th:action="@{/movimientos-empleados/salida}" method="POST"><button type="submit">Salida Empleados de Proveedores</button></form>
+                <form th:action="@{/movimientos-empleados/consultar}" method="POST"><button type="submit">Consultar Movimientos Empleados de Proveedores</button></form>
+                <form th:action="@{/movimientos-empleados/eliminar}" method="POST"><button type="submit">Eliminar Movimientos Empleados de Proveedores</button></form>
+            </div>
+            <div class="button-group">
+                <form th:action="@{/turnos/informes}" method="POST"><button type="submit">Informes Entre Turnos</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

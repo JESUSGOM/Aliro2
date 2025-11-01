@@ -1,18 +1,144 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal</title>
     <style>
-        body { font-family: sans-serif; padding: 2rem; }
-        .welcome-box { max-width: 600px; margin: auto; padding: 2rem; border: 1px solid #ddd; border-radius: 8px; text-align: center; }
+        /* --- Reseteo y Estilos Base --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+        }
+
+        /* --- Barra Superior (Header) --- */
+        .header {
+            width: 100%;
+            padding: 10px 40px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e7e7e7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .header-logo img {
+            height: 40px;
+        }
+
+        /* --- Contenedor Principal con Menú Lateral --- */
+        .container {
+            display: flex;
+            height: calc(100vh - 61px); /* Resta la altura del header */
+        }
+
+        /* --- Menú de Navegación Lateral --- */
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #495057;
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        /* --- Contenido Principal --- */
+        .main-content {
+            flex-grow: 1; /* Ocupa el resto del espacio */
+            padding: 40px;
+        }
+
+        /* --- Botón de Logout --- */
+        .logout-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
-<div class="welcome-box">
-    <h1>¡Bienvenido, <span th:text="${usuario.usuNombre}"></span>!</h1>
-    <p>Has accedido al área protegida.</p>
-    <a th:href="@{/logout}">Cerrar Sesión</a>
+
+<header class="header">
+    <div class="header-logo">
+        <img th:src="@{/ICONOS/logoitc.png}" alt="Logo ITC">
+    </div>
+    <div>
+        <span>Usuario: <strong sec:authentication="principal.username"></strong></span>
+    </div>
+</header>
+
+<div class="container">
+    <nav class="sidebar">
+        <h2>Menú</h2>
+        <ul>
+            <li><a th:href="@{/panel}">Inicio del Panel</a></li>
+
+            <li sec:authorize="hasAnyRole('U', 'P')">
+                <a th:href="@{/principal/opcion1}">Opción General</a>
+            </li>
+
+            <li sec:authorize="hasRole('T')">
+                <a th:href="@{/tecnicos/dashboard}">Dashboard de Técnico</a>
+            </li>
+
+            <li sec:authorize="hasRole('A')">
+                <a th:href="@{/admin/gestion}">Gestión Administrativa</a>
+            </li>
+
+            <li sec:authorize="hasRole('Z')">
+                <a th:href="@{/superadmin/sistema}">Configuración del Sistema</a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('Z', 'Y')">
+                <a th:href="@{/supervision/reportes}">Reportes de Supervisión</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1>Bienvenido a Aliro2</h1>
+        <p>Este es el panel de control principal. Selecciona una opción del menú de la izquierda para comenzar a trabajar.</p>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Cerrar Sesión</button>
+        </form>
+    </main>
 </div>
+
 </body>
 </html>

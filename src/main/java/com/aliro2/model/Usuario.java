@@ -24,8 +24,14 @@ public class Usuario {
     @Column(name = "UsuApellidoUno")
     private String usuApellidoUno;
 
+    @Column(name = "UsuApellidoDos")
+    private String usuApellidoDos;
+
     @Column(name = "UsuTipo")
     private String usuTipo;
+
+    @Column(name = "UsuCargo")
+    private String usuCargo;
 
     public String getUsuDni() {
         return usuDni;
@@ -65,5 +71,17 @@ public class Usuario {
 
     public void setUsuTipo(String usuTipo) {
         this.usuTipo = usuTipo;
+    }
+
+    public String getUsuCargo() {
+        return usuCargo;
+    }
+
+    public void setUsuCargo(String usuCargo) {
+        this.usuCargo = usuCargo;
+    }
+
+    public String getUsuApellidoDos() {
+        return usuApellidoDos;
     }
 }
