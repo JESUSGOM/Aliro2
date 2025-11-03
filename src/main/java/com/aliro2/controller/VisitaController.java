@@ -21,36 +21,48 @@ public class VisitaController {
     @Autowired
     private MovadojService movadojService;
 
-    // --- 1. MOSTRAR FORMULARIO DE NUEVA VISITA (Botón "Entrada Visitantes") ---
+    @Autowired
+    private UsuarioRepository usuarioRepository; // Para obtener el centro del usuario
+
+    // --- 1. MUESTRA EL FORMULARIO DE NUEVA VISITA ---
+    // Se activa con el botón: "Entrada Visitantes"
     @GetMapping("/visitas/entrada")
-    public String mostrarFormularioEntrada(Model model) {
-        model.addAttribute("visita", new Movadoj());
+    public String mostrarFormularioEntrada(Model model, Authentication authentication) {
+
+        Usuario usuario = usuarioRepository.findByUsuDni(authentication.getName()).get();
+
+        Movadoj nuevaVisita = new Movadoj();
+        nuevaVisita.setMovCentro(usuario.getUsuCentro()); // Asigna el centro del usuario
+
+        model.addAttribute("visita", nuevaVisita);
         model.addAttribute("pageTitle", "Registrar Entrada de Visita");
-        model.addAttribute("view", "vistas-formularios/form-visita"); // Carga el fragmento del formulario
-        return "layouts/layout"; // Carga la plantilla base
+        model.addAttribute("view", "vistas-formularios/form-visita");
+        return "layouts/layout";
     }
 
-    // --- 2. GUARDAR LA NUEVA VISITA (Acción del formulario) ---
+    // --- 2. GUARDA LA NUEVA VISITA (O ACTUALIZA) ---
+    // Se activa desde el formulario "form-visita.html"
     @PostMapping("/visitas/guardar")
-    public String guardarVisita(@ModelAttribute("visita") Movadoj visita, Authentication authentication) {
-        // Seteamos los datos de auditoría
-        DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
-        DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
+    public String guardarVisita(@ModelAttribute("visita") Movadoj visita) {
 
-        visita.setMovFechaEntrada(LocalDate.now().format(dtfFecha));
-        visita.setMovHoraEntrada(LocalTime.now().format(dtfHora));
-        // Aquí también podrías setear el centro y usuario si es necesario
-        // visita.setMovCentro(usuarioLogueado.getUsuCentro());
+        // Si es una visita nueva (no tiene ID), seteamos la fecha y hora de entrada
+        if (visita.getMovOrden() == null) {
+            DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
+            DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
+
+            visita.setMovFechaEntrada(LocalDate.now().format(dtfFecha));
+            visita.setMovHoraEntrada(LocalTime.now().format(dtfHora));
+        }
 
         movadojService.save(visita);
         return "redirect:/panel"; // Vuelve al panel principal
     }
 
-    // --- 3. MOSTRAR LISTA DE VISITAS ACTIVAS (Botón "Salida Visitantes") ---
+    // --- 3. MUESTRA LISTA DE VISITAS ACTIVAS ---
+    // Se activa con el botón: "Salida Visitantes"
     @GetMapping("/visitas/salida")
     public String mostrarFormularioSalida(Model model) {
-        // Buscamos solo visitas que no tienen fecha de salida
-        List<Movadoj> visitasActivas = movadojService.findVisitasActivas(); // Necesitarás crear este método en tu Service/Repository
+        List<Movadoj> visitasActivas = movadojService.findVisitasActivas();
 
         model.addAttribute("visitas", visitasActivas);
         model.addAttribute("pageTitle", "Registrar Salida de Visita");
@@ -58,7 +70,8 @@ public class VisitaController {
         return "layouts/layout";
     }
 
-    // --- 4. REGISTRAR LA SALIDA (Acción del botón en la lista) ---
+    // --- 4. REGISTRA LA SALIDA (ACTUALIZA) ---
+    // Se activa desde el botón en la lista "list-visitas-salida.html"
     @PostMapping("/visitas/registrar-salida/{id}")
     public String registrarSalida(@PathVariable("id") Integer id) {
         Movadoj visita = movadojService.findById(id)
@@ -70,14 +83,15 @@ public class VisitaController {
         visita.setMovFechaSalida(LocalDate.now().format(dtfFecha));
         visita.setMovHoraSalida(LocalTime.now().format(dtfHora));
 
-        movadojService.save(visita); // Guarda el cambio
+        movadojService.save(visita);
         return "redirect:/visitas/salida"; // Recarga la lista de salidas
     }
 
-    // --- 5. MOSTRAR LISTA DE TODAS LAS VISITAS (Botón "Informes Visitantes") ---
+    // --- 5. MUESTRA EL INFORME DE TODAS LAS VISITAS ---
+    // Se activa con el botón: "Informes Visitantes"
     @GetMapping("/visitas/informes")
     public String mostrarInformeVisitas(Model model) {
-        model.addAttribute("visitas", movadojService.findAll());
+        model.addAttribute("visitas", movadojService.findAll()); // Muestra todas
         model.addAttribute("pageTitle", "Informe de Visitantes");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";

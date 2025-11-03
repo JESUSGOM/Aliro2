@@ -29,4 +29,8 @@ public class MovadojService {
     public void deleteById(Integer id) {
         movadojRepository.deleteById(id);
     }
+
+    public List<Movadoj> findVisitasActivas() {
+        return movadojRepository.findByMovFechaSalidaIsNullOrderByMovFechaEntradaDesc();
+    }
 }

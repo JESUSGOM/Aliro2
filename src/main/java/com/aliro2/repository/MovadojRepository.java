@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
+
+    // Nuevo método para encontrar visitas sin fecha de salida
+    List<Movadoj> findByMovFechaSalidaIsNullOrderByMovFechaEntradaDesc();
 }
