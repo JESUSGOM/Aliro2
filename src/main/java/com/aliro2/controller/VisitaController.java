@@ -1,7 +1,9 @@
 package com.aliro2.controller;
 
 import com.aliro2.model.Movadoj;
+import com.aliro2.model.Usuario;
 import com.aliro2.service.MovadojService;
+import com.aliro2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;

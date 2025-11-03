@@ -29,4 +29,8 @@ public class KeyMoveService {
     public void deleteById(Integer id) {
         keyMoveRepository.deleteById(id);
     }
+
+    public List<KeyMove> findLlavesPrestadas() {
+        return keyMoveRepository.findByKeyFechaRecepcionIsNull();
+    }
 }

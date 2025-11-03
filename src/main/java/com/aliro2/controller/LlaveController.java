@@ -19,11 +19,27 @@ import java.util.List;
 @Controller
 public class LlaveController {
 
-    @Autowired
-    private LlaveService llaveService;
+    // --- INICIO DE LA MODIFICACIÓN (Inyección por Constructor) ---
 
+    // 1. Declara los servicios como 'final' para asegurar que se inicialicen.
+    private final LlaveService llaveService;
+    private final KeyMoveService keyMoveService;
+
+    // 2. Crea un constructor que reciba los servicios.
+    // Spring usará @Autowired aquí automáticamente para "inyectar"
+    // las instancias de LlaveService y KeyMoveService.
     @Autowired
-    private KeyMoveService keyMoveService;
+    public LlaveController(LlaveService llaveService, KeyMoveService keyMoveService) {
+        this.llaveService = llaveService;
+        this.keyMoveService = keyMoveService;
+    }
+
+    // --- FIN DE LA MODIFICACIÓN ---
+
+
+    // Define los formateadores de fecha/hora una sola vez
+    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
+    private final DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
      * MUESTRA EL FORMULARIO PARA ENTREGAR UNA LLAVE
@@ -31,9 +47,11 @@ public class LlaveController {
      */
     @GetMapping("/llaves/entrega")
     public String mostrarFormularioEntrega(Model model) {
-        // Necesitamos la lista de llaves disponibles para el <select>
-        List<Llave> llavesDisponibles = llaveService.findAll(); // Aquí deberías filtrar solo las no prestadas
+        // 1. Necesitamos la lista de llaves (la entidad Llave) para el <select>
+        //    (Idealmente, aquí filtrarías solo las llaves que no están ya prestadas)
+        List<Llave> llavesDisponibles = llaveService.findAll();
 
+        // 2. Pasamos un objeto 'KeyMove' vacío para el formulario
         model.addAttribute("keyMove", new KeyMove());
         model.addAttribute("llavesDisponibles", llavesDisponibles);
         model.addAttribute("pageTitle", "Registrar Entrega de Llave");
@@ -47,26 +65,23 @@ public class LlaveController {
      */
     @PostMapping("/llaves/guardar-entrega")
     public String guardarEntregaLlave(@ModelAttribute("keyMove") KeyMove keyMove) {
-        DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
-        DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
 
         keyMove.setKeyFechaEntrega(LocalDate.now().format(dtfFecha));
         keyMove.setKeyHoraEntrega(LocalTime.now().format(dtfHora));
 
-        // Aquí seteamos el KeyLlvOrden basado en el LlvCodigo seleccionado en el form
-        // (Asumimos que el campo 'keyLlvOrden' en el formulario contenía el LlvCodigo)
+        // El campo 'keyLlvOrden' se rellena desde el formulario (es el LlvCodigo)
 
         keyMoveService.save(keyMove);
-        return "redirect:/panel";
+        return "redirect:/panel"; // Vuelve al panel principal
     }
 
     /**
-     * MUESTRA LA LISTA DE LLAVES PRESTADAS PARA RECOGER
+     * MUESTRA LA LISTA DE LLAVES PRESTADAS (PARA RECOGER)
      * Se activa con el botón: "Recogida de Llaves"
      */
     @GetMapping("/llaves/recogida")
     public String mostrarListaRecogida(Model model) {
-        // Debes crear un método en tu servicio para buscar llaves sin fecha de recepción
+        // Usamos el método personalizado para encontrar solo llaves sin fecha de recepción
         List<KeyMove> llavesPrestadas = keyMoveService.findLlavesPrestadas();
 
         model.addAttribute("llavesPrestadas", llavesPrestadas);
@@ -81,17 +96,16 @@ public class LlaveController {
      */
     @PostMapping("/llaves/registrar-recogida/{id}")
     public String registrarRecogida(@PathVariable("id") Integer id) {
+        // Busca el movimiento de llave específico
         KeyMove keyMove = keyMoveService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ID de movimiento inválido:" + id));
 
-        DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
-        DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
-
+        // Setea la fecha y hora de recepción
         keyMove.setKeyFechaRecepcion(LocalDate.now().format(dtfFecha));
         keyMove.setKeyHoraRecepcion(LocalTime.now().format(dtfHora));
 
-        keyMoveService.save(keyMove);
-        return "redirect:/llaves/recogida"; // Recarga la lista
+        keyMoveService.save(keyMove); // Guarda la actualización
+        return "redirect:/llaves/recogida"; // Recarga la lista de llaves pendientes
     }
 
     /**
@@ -100,7 +114,9 @@ public class LlaveController {
      */
     @GetMapping("/llaves/informes")
     public String mostrarInformeLlaves(Model model) {
-        model.addAttribute("movimientos", keyMoveService.findAll());
+        List<KeyMove> movimientos = keyMoveService.findAll(); // Obtiene todos los movimientos
+
+        model.addAttribute("movimientos", movimientos);
         model.addAttribute("pageTitle", "Informe Movimientos de Llaves");
         model.addAttribute("view", "vistas-listados/list-llaves-informe");
         return "layouts/layout";
