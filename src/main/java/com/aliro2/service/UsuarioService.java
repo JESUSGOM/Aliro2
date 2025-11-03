@@ -5,6 +5,7 @@ import com.aliro2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,6 +13,15 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    // Método específico que ya usamos para el login
+    public Optional<Usuario> findByUsuDni(String id) {
+        return usuarioRepository.findByUsuDni(id);
+    }
 
     /**
      * Valida si las credenciales (DNI y clave) proporcionadas por el usuario son correctas.
@@ -34,5 +44,13 @@ public class UsuarioService {
 
         // 3. Si el usuario no existe o la contraseña no coincide, devuelve un Optional vacío.
         return Optional.empty();
+    }
+
+    public Usuario save(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public void deleteById(String id) {
+        usuarioRepository.deleteById(id);
     }
 }

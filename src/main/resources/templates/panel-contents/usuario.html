@@ -18,41 +18,24 @@
         .dashboard-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px; /* Espacio entre las columnas */
-            padding: 20px 40px; /* Margen a los lados */
-            background-color: #e9ecef; /* Fondo gris claro como en la imagen */
+            gap: 20px;
+            padding: 20px 40px;
+            background-color: #e9ecef;
         }
 
-        .dashboard-column {
-            flex: 1; /* Cada columna ocupa el mismo espacio */
-            min-width: 300px; /* Ancho mínimo para responsividad */
+        .dashboard-column { flex: 1;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Espacio entre los grupos de botones */
+            gap: 15px;
         }
 
-        .button-group button {
+        .button-group { background-color: #28a745; padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+        /* Estilo para que los enlaces <a> parezcan los botones de tus formularios */
+        .button-group a.btn-menu {
             width: 100%;
-            /* 1. El color de fondo ahora es el gris del borde */
-            background-color: #ccc;
-            /* 2. El texto ahora es negrita */
+            background-color: #ccc; /* Fondo color borde */
             font-weight: bold;
-            color: #333; /* Mantenemos el color del texto oscuro para que sea legible */
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .button-group form {
-            margin: 0;
-        }
-
-        .button-group button {
-            width: 100%;
-            background-color: white;
             color: #333;
             border: 1px solid #ccc;
             padding: 10px;
@@ -60,11 +43,9 @@
             font-size: 14px;
             cursor: pointer;
             border-radius: 4px;
+            text-decoration: none;
         }
-
-        .button-group button:hover {
-            background-color: #f0f0f0;
-        }
+        .button-group a.btn-menu:hover { background-color: #ddd; }
     </style>
 
     <div class="user-info-bar">
