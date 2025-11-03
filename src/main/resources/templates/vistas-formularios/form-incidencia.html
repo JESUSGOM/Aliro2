@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
+
 <div th:fragment="content">
+
     <style>
-        .form-container { max-width: 900px; margin: 30px auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .form-container h2 { text-align: center; margin-bottom: 25px; }
-        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .form-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
     </style>
 
     <div class="form-container">
         <h2 th:text="${pageTitle}">Gestión de Incidencia</h2>
 
         <form th:action="@{/incidencias/guardar}" th:object="${incidencia}" method="post">
+
             <input type="hidden" th:field="*{incId}" />
+
             <input type="hidden" th:field="*{incUsuario}" />
             <input type="hidden" th:field="*{incFecha}" />
             <input type="hidden" th:field="*{incHora}" />
@@ -45,8 +64,10 @@
 
     <div class="form-actions">
         <a th:href="@{/panel}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+
         <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Incidencia</button>
     </div>
+
     </form>
 </div>
 </div>

@@ -11,8 +11,14 @@ import java.util.Optional;
 @Service
 public class MovadojService {
 
+    // 1. El repositorio se declara como 'final'
+    private final MovadojRepository movadojRepository;
+
+    // 2. Se usa un constructor para la inyección de dependencias (buena práctica)
     @Autowired
-    private MovadojRepository movadojRepository;
+    public MovadojService(MovadojRepository movadojRepository) {
+        this.movadojRepository = movadojRepository;
+    }
 
     public List<Movadoj> findAll() {
         return movadojRepository.findAll();
@@ -30,7 +36,12 @@ public class MovadojService {
         movadojRepository.deleteById(id);
     }
 
+    // 3. Se deja solo UNA versión del método findVisitasActivas
+    /**
+     * Llama al nuevo método del repositorio para obtener solo las visitas activas.
+     * (Busca visitas donde 'movFechaSalida' es nulo y las ordena).
+     */
     public List<Movadoj> findVisitasActivas() {
-        return movadojRepository.findByMovFechaSalidaIsNullOrderByMovFechaEntradaDesc();
+        return movadojRepository.findByMovFechaSalidaIsNullOrderByMovOrdenDesc();
     }
 }
