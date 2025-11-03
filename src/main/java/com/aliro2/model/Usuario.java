@@ -68,4 +68,68 @@ public class Usuario {
      */
     @Column(name = "UsuCargo", length = 30)
     private String usuCargo;
+
+    public String getUsuDni() {
+        return usuDni;
+    }
+
+    public void setUsuDni(String usuDni) {
+        this.usuDni = usuDni;
+    }
+
+    public String getUsuClave() {
+        return usuClave;
+    }
+
+    public void setUsuClave(String usuClave) {
+        this.usuClave = usuClave;
+    }
+
+    public int getUsuCentro() {
+        return usuCentro;
+    }
+
+    public void setUsuCentro(int usuCentro) {
+        this.usuCentro = usuCentro;
+    }
+
+    public String getUsuNombre() {
+        return usuNombre;
+    }
+
+    public void setUsuNombre(String usuNombre) {
+        this.usuNombre = usuNombre;
+    }
+
+    public String getUsuApellidoUno() {
+        return usuApellidoUno;
+    }
+
+    public void setUsuApellidoUno(String usuApellidoUno) {
+        this.usuApellidoUno = usuApellidoUno;
+    }
+
+    public String getUsuApellidoDos() {
+        return usuApellidoDos;
+    }
+
+    public void setUsuApellidoDos(String usuApellidoDos) {
+        this.usuApellidoDos = usuApellidoDos;
+    }
+
+    public String getUsuTipo() {
+        return usuTipo;
+    }
+
+    public void setUsuTipo(String usuTipo) {
+        this.usuTipo = usuTipo;
+    }
+
+    public String getUsuCargo() {
+        return usuCargo;
+    }
+
+    public void setUsuCargo(String usuCargo) {
+        this.usuCargo = usuCargo;
+    }
 }

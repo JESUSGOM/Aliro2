@@ -2,21 +2,27 @@ package com.aliro2.controller;
 
 import com.aliro2.model.Movadoj;
 import com.aliro2.model.Usuario;
-import com.aliro2.repository.UsuarioRepository; // Importa UsuarioRepository
+import com.aliro2.repository.UsuarioRepository;
 import com.aliro2.service.MovadojService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication; // Importa Authentication
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Controlador para la lógica de "Gestión de Visitantes" (Entidad Movadoj)
@@ -79,28 +85,52 @@ public class VisitaController {
     }
 
     /**
-     * MUESTRA LISTA DE VISITAS ACTIVAS (PARA DAR SALIDA)
+     * MUESTRA LISTA DE VISITAS ACTIVAS (PARA DAR SALIDA) - CON PAGINACIÓN Y BÚSQUEDA
      * Se activa con el botón: "Salida Visitantes"
      * URL: /visitas/salida
      */
     @GetMapping("/visitas/salida")
-    public String mostrarFormularioSalida(Model model) {
-        // Usamos el método personalizado para obtener solo visitas activas
-        List<Movadoj> visitasActivas = movadojService.findVisitasActivas();
+    public String mostrarFormularioSalida(Model model,
+                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                          @RequestParam(name = "keyword", required = false) String keyword) {
 
-        model.addAttribute("visitas", visitasActivas);
+        int tamanoPagina = 10; // Define 10 visitas por página
+        Pageable pageable = PageRequest.of(page, tamanoPagina);
+
+        // 1. Obtenemos la PÁGINA de visitas activas, pasando el keyword (puede ser nulo)
+        Page<Movadoj> visitasPage = movadojService.findVisitasActivas(keyword, pageable);
+
+        // 2. Pasamos el objeto 'Page' completo a la vista
+        model.addAttribute("visitasPage", visitasPage);
+
+        // 3. Pasamos el keyword de vuelta al modelo para mantenerlo en la barra de búsqueda y paginación
+        model.addAttribute("keyword", keyword);
+
+        // 4. (Opcional pero recomendado) Generamos la lista de números de página
+        int totalPaginas = visitasPage.getTotalPages();
+        if (totalPaginas > 0) {
+            List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas)
+                    .map(i -> i - 1) // Los números de página en Spring son base 0 (0, 1, 2...)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("numerosPagina", numerosPagina);
+        }
+
         model.addAttribute("pageTitle", "Registrar Salida de Visita");
         model.addAttribute("view", "vistas-listados/list-visitas-salida");
         return "layouts/layout";
     }
 
     /**
-     * REGISTRA LA SALIDA (ACTUALIZA)
+     * REGISTRA LA SALIDA (ACTUALIZA) - CON REDIRECCIÓN DE PAGINACIÓN
      * Se activa desde el botón en la lista "list-visitas-salida.html"
      * URL: /visitas/registrar-salida/{id}
      */
     @PostMapping("/visitas/registrar-salida/{id}")
-    public String registrarSalida(@PathVariable("id") Integer id) {
+    public String registrarSalida(@PathVariable("id") Integer id,
+                                  @RequestParam(name = "page", defaultValue = "0") int page,
+                                  @RequestParam(name = "keyword", required = false) String keyword) {
+
         Movadoj visita = movadojService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ID de visita inválido:" + id));
 
@@ -109,17 +139,27 @@ public class VisitaController {
         visita.setMovHoraSalida(LocalTime.now().format(dtfHora));
 
         movadojService.save(visita);
-        return "redirect:/visitas/salida"; // Recarga la lista de salidas
+
+        // Redirige de vuelta a la misma página y con el mismo filtro de búsqueda
+        String redirectUrl = "/visitas/salida?page=" + page;
+        if (keyword != null && !keyword.isEmpty()) {
+            redirectUrl += "&keyword=" + keyword;
+        }
+        return "redirect:" + redirectUrl;
     }
 
     /**
      * MUESTRA EL INFORME DE TODAS LAS VISITAS
      * Se activa con el botón: "Informes Visitantes"
      * URL: /visitas/informes
+     * (Este método también debería paginarse, pero lo dejamos simple por ahora)
      */
     @GetMapping("/visitas/informes")
     public String mostrarInformeVisitas(Model model) {
+
+        // TODO: Implementar paginación y búsqueda aquí también si es necesario
         model.addAttribute("visitas", movadojService.findAll()); // Muestra todas
+
         model.addAttribute("pageTitle", "Informe de Visitantes");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";

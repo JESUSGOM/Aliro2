@@ -51,4 +51,116 @@ public class Movadoj {
 
     @Column(name = "MovMotivo")
     private String movMotivo;
+
+    public Integer getMovOrden() {
+        return movOrden;
+    }
+
+    public void setMovOrden(Integer movOrden) {
+        this.movOrden = movOrden;
+    }
+
+    public Integer getMovCentro() {
+        return movCentro;
+    }
+
+    public void setMovCentro(Integer movCentro) {
+        this.movCentro = movCentro;
+    }
+
+    public String getMovNombre() {
+        return movNombre;
+    }
+
+    public void setMovNombre(String movNombre) {
+        this.movNombre = movNombre;
+    }
+
+    public String getMovApellidoUno() {
+        return movApellidoUno;
+    }
+
+    public void setMovApellidoUno(String movApellidoUno) {
+        this.movApellidoUno = movApellidoUno;
+    }
+
+    public String getMovApellidoDos() {
+        return movApellidoDos;
+    }
+
+    public void setMovApellidoDos(String movApellidoDos) {
+        this.movApellidoDos = movApellidoDos;
+    }
+
+    public String getMovProcedencia() {
+        return movProcedencia;
+    }
+
+    public void setMovProcedencia(String movProcedencia) {
+        this.movProcedencia = movProcedencia;
+    }
+
+    public String getMovDestino() {
+        return movDestino;
+    }
+
+    public void setMovDestino(String movDestino) {
+        this.movDestino = movDestino;
+    }
+
+    public String getMovPlanta() {
+        return movPlanta;
+    }
+
+    public void setMovPlanta(String movPlanta) {
+        this.movPlanta = movPlanta;
+    }
+
+    public String getMovFechaEntrada() {
+        return movFechaEntrada;
+    }
+
+    public void setMovFechaEntrada(String movFechaEntrada) {
+        this.movFechaEntrada = movFechaEntrada;
+    }
+
+    public String getMovHoraEntrada() {
+        return movHoraEntrada;
+    }
+
+    public void setMovHoraEntrada(String movHoraEntrada) {
+        this.movHoraEntrada = movHoraEntrada;
+    }
+
+    public String getMovFechaSalida() {
+        return movFechaSalida;
+    }
+
+    public void setMovFechaSalida(String movFechaSalida) {
+        this.movFechaSalida = movFechaSalida;
+    }
+
+    public String getMovHoraSalida() {
+        return movHoraSalida;
+    }
+
+    public void setMovHoraSalida(String movHoraSalida) {
+        this.movHoraSalida = movHoraSalida;
+    }
+
+    public String getMovVehiculo() {
+        return movVehiculo;
+    }
+
+    public void setMovVehiculo(String movVehiculo) {
+        this.movVehiculo = movVehiculo;
+    }
+
+    public String getMovMotivo() {
+        return movMotivo;
+    }
+
+    public void setMovMotivo(String movMotivo) {
+        this.movMotivo = movMotivo;
+    }
 }

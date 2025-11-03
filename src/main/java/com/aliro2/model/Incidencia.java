@@ -36,4 +36,76 @@ public class Incidencia {
 
     @Column(name = "IncUsuario")
     private String incUsuario;
+
+    public Integer getIncId() {
+        return incId;
+    }
+
+    public void setIncId(Integer incId) {
+        this.incId = incId;
+    }
+
+    public Integer getIncCentro() {
+        return incCentro;
+    }
+
+    public void setIncCentro(Integer incCentro) {
+        this.incCentro = incCentro;
+    }
+
+    public String getIncFecha() {
+        return incFecha;
+    }
+
+    public void setIncFecha(String incFecha) {
+        this.incFecha = incFecha;
+    }
+
+    public String getIncHora() {
+        return incHora;
+    }
+
+    public void setIncHora(String incHora) {
+        this.incHora = incHora;
+    }
+
+    public String getIncTexto() {
+        return incTexto;
+    }
+
+    public void setIncTexto(String incTexto) {
+        this.incTexto = incTexto;
+    }
+
+    public String getIncComunicadoA() {
+        return incComunicadoA;
+    }
+
+    public void setIncComunicadoA(String incComunicadoA) {
+        this.incComunicadoA = incComunicadoA;
+    }
+
+    public String getIncModoComunica() {
+        return incModoComunica;
+    }
+
+    public void setIncModoComunica(String incModoComunica) {
+        this.incModoComunica = incModoComunica;
+    }
+
+    public String getIncEmailComunica() {
+        return incEmailComunica;
+    }
+
+    public void setIncEmailComunica(String incEmailComunica) {
+        this.incEmailComunica = incEmailComunica;
+    }
+
+    public String getIncUsuario() {
+        return incUsuario;
+    }
+
+    public void setIncUsuario(String incUsuario) {
+        this.incUsuario = incUsuario;
+    }
 }
