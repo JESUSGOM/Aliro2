@@ -39,23 +39,21 @@ public class VisitaController {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // Método auxiliar para obtener el centro del usuario logueado
+    // --- MÉTODO AUXILIAR PARA OBTENER EL CENTRO DEL USUARIO ---
     private Integer getCentroUsuario(Authentication authentication) {
         String dni = authentication.getName();
         return usuarioRepository.findByUsuDni(dni)
-                .map(Usuario::getUsuCentro)
+                .map(Usuario::getUsuCentro) // Obtiene el UsuCentro del objeto Usuario
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado o sin centro asignado"));
     }
 
-
     @GetMapping("/visitas/entrada")
     public String mostrarFormularioEntrada(Model model, Authentication authentication) {
-        // Obtenemos el centro del usuario para pre-rellenar o validar
         Integer centroUsuario = getCentroUsuario(authentication);
 
         Movadoj nuevaVisita = new Movadoj();
-        nuevaVisita.setMovCentro(centroUsuario); // Establece el centro de la visita al del usuario
-        // ... (resto del código igual)
+        nuevaVisita.setMovCentro(centroUsuario); // Asigna el centro del usuario
+
         model.addAttribute("visita", nuevaVisita);
         model.addAttribute("pageTitle", "Registrar Entrada de Visita");
         model.addAttribute("view", "vistas-formularios/form-visita");
@@ -66,10 +64,9 @@ public class VisitaController {
     public String guardarVisita(@ModelAttribute("visita") Movadoj visita, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
 
-        // Seguridad: Asegurarse de que el centro de la visita coincide con el del usuario logueado
+        // --- VALIDACIÓN DE SEGURIDAD ---
+        // Aseguramos que un usuario no pueda guardar una visita en otro centro
         if (!visita.getMovCentro().equals(centroUsuario)) {
-            // Manejar error o redirigir con un mensaje de acceso denegado
-            // Por simplicidad, aquí redirigimos al panel, pero lo ideal sería una página de error
             return "redirect:/panel?error=accesoDenegado";
         }
 
@@ -85,13 +82,14 @@ public class VisitaController {
     public String mostrarFormularioSalida(Model model,
                                           @RequestParam(name = "page", defaultValue = "0") int page,
                                           @RequestParam(name = "keyword", required = false) String keyword,
-                                          Authentication authentication) { // <-- Añadimos Authentication
+                                          Authentication authentication) { // <-- Se añade Authentication
 
-        Integer centroUsuario = getCentroUsuario(authentication); // Obtenemos el centro del usuario
+        Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
 
         int tamanoPagina = 10;
         Pageable pageable = PageRequest.of(page, tamanoPagina);
-        // --- CAMBIO AQUÍ: Pasamos el centro al servicio ---
+
+        // 2. Pasamos el keyword Y el centroUsuario al servicio
         Page<Movadoj> visitasPage = movadojService.findVisitasActivas(keyword, centroUsuario, pageable);
 
         model.addAttribute("visitasPage", visitasPage);
@@ -115,17 +113,16 @@ public class VisitaController {
     public String registrarSalida(@PathVariable("id") Integer id,
                                   @RequestParam(name = "page", defaultValue = "0") int page,
                                   @RequestParam(name = "keyword", required = false) String keyword,
-                                  Authentication authentication) { // <-- Añadimos Authentication
+                                  Authentication authentication) { // <-- Se añade Authentication
 
-        Integer centroUsuario = getCentroUsuario(authentication); // Obtenemos el centro del usuario
+        Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
 
-        // --- CAMBIO AQUÍ: Usamos findByIdAndMovCentro para validar que la visita pertenece al usuario ---
+        // 2. Verificamos que la visita sea de ese centro ANTES de modificarla
         Movadoj visita = movadojService.findByIdAndMovCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de visita inválido o acceso denegado:" + id));
 
         visita.setMovFechaSalida(LocalDate.now().format(dtfFecha));
         visita.setMovHoraSalida(LocalTime.now().format(dtfHora));
-
         movadojService.save(visita);
 
         String redirectUrl = "/visitas/salida?page=" + page;
@@ -136,19 +133,23 @@ public class VisitaController {
     }
 
     @GetMapping("/visitas/informes")
-    public String mostrarInformeVisitas(Model model, Authentication authentication) { // <-- Añadimos Authentication
-        Integer centroUsuario = getCentroUsuario(authentication);
-        // --- CAMBIO AQUÍ: Pasamos el centro al servicio ---
-        model.addAttribute("visitas", movadojService.findAll(centroUsuario));
+    public String mostrarInformeVisitas(Model model, Authentication authentication) {
+        Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
+
+        // 2. Buscamos todas las visitas (findAll) pero filtradas por el centro
+        // (Asumiendo que quieres el informe solo de tu centro)
+        model.addAttribute("visitas", movadojService.findAllByCentro(centroUsuario));
+
         model.addAttribute("pageTitle", "Informe de Visitantes");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";
     }
 
     @GetMapping("/visitas/editar/{id}")
-    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, Authentication authentication) { // <-- Añadimos Authentication
-        Integer centroUsuario = getCentroUsuario(authentication);
-        // --- CAMBIO AQUÍ: Usamos findByIdAndMovCentro para validar acceso ---
+    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, Authentication authentication) {
+        Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
+
+        // 2. Verificamos que la visita a editar sea del centro del usuario
         Movadoj visita = movadojService.findByIdAndMovCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de visita inválido o acceso denegado:" + id));
 

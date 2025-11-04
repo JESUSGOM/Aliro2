@@ -11,25 +11,25 @@ import java.util.List;
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
 
-    // --- MÉTODOS EXISTENTES (con filtro de centro añadido) ---
+    // --- MÉTODOS REQUERIDOS PARA LA VISTA "SALIDA VISITANTES" ---
 
-    // 1. Busca visitas activas (sin fecha de salida) POR CENTRO - PAGINADO
-    Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
-
-    // 2. Busca visitas activas (sin fecha de salida) POR CENTRO y CON BÚSQUEDA - PAGINADO
-    // (Añadimos el filtro MovCentroEquals después de IsNull)
-    Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
-
-    // 3. Versión sin paginación (para findAll si aplica) POR CENTRO
-    List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
-
-
-    // --- MÉTODOS ANTES NUEVOS, AHORA CON FILTRO DE CENTRO (para "sólo de hoy") ---
-
-    // 4. Paginado, SÓLO de HOY Y POR CENTRO
+    /**
+     * 1. (Sin Búsqueda) Busca visitas activas (Salida IS NULL) de HOY (FechaEntrada) y POR CENTRO.
+     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, Pageable pageable);
 
-    // 5. Paginado, de HOY, CON BÚSQUEDA Y POR CENTRO
+    /**
+     * 2. (Con Búsqueda) Busca visitas activas (Salida IS NULL) de HOY (FechaEntrada) y POR CENTRO,
+     * que coincidan con el Nombre O el Apellido.
+     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
 
+
+    // --- MÉTODOS OPCIONALES (Para informes u otras vistas) ---
+
+    // Busca TODAS las visitas activas (sin filtro de fecha) POR CENTRO (Paginado)
+    Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
+
+    // Busca TODAS las visitas activas (sin filtro de fecha) POR CENTRO (Sin Paginación)
+    List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
 }

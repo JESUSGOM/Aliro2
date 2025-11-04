@@ -16,6 +16,8 @@ import java.util.Optional;
 public class MovadojService {
 
     private final MovadojRepository movadojRepository;
+
+    // El formato de fecha de tu BD es AAAAMMDD
     private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Autowired
@@ -23,17 +25,45 @@ public class MovadojService {
         this.movadojRepository = movadojRepository;
     }
 
-    // --- CAMBIO AQUÍ: findAll ahora también recibe el centro ---
-    public List<Movadoj> findAll(Integer movCentro) {
-        // Asumiendo que findAll también debería filtrar por centro
+    /**
+     * MÉTODO CORREGIDO:
+     * Ahora este método filtra las visitas activas
+     * para que muestre SÓLO las del día actual Y del centro del usuario.
+     */
+    public Page<Movadoj> findVisitasActivas(String keyword, Integer movCentro, Pageable pageable) {
+
+        // 1. Obtenemos la fecha de hoy y la formateamos como "yyyyMMdd"
+        String fechaHoy = LocalDate.now().format(dtfFecha);
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // 2. Si hay búsqueda, llama al método de búsqueda CON FECHA y CON CENTRO
+            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(fechaHoy, movCentro, keyword, keyword, pageable);
+        } else {
+            // 3. Si no hay búsqueda, llama al método simple CON FECHA y CON CENTRO
+            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(fechaHoy, movCentro, pageable);
+        }
+    }
+
+    // --- MÉTODOS CRUD ESTÁNDAR ---
+
+    public List<Movadoj> findAll() {
+        return movadojRepository.findAll();
+    }
+
+    // Método para buscar todas las visitas de un centro (para informes)
+    public List<Movadoj> findAllByCentro(Integer movCentro) {
+        // Asumiendo que el informe general debe ser de visitas activas
         return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro);
     }
 
-    // --- CAMBIO AQUÍ: findById también debería comprobar el centro si lo usas en el flujo ---
-    // Si findById se usa para editar o dar salida, debe asegurar que la visita pertenece al centro del usuario.
+    public Optional<Movadoj> findById(Integer id) {
+        return movadojRepository.findById(id);
+    }
+
+    // Servicio para asegurar que solo se editen visitas del centro del usuario
     public Optional<Movadoj> findByIdAndMovCentro(Integer id, Integer movCentro) {
-        return movadojRepository.findById(id) // Primero buscamos por ID
-                .filter(movadoj -> movadoj.getMovCentro().equals(movCentro)); // Luego filtramos por centro
+        return movadojRepository.findById(id)
+                .filter(movadoj -> movadoj.getMovCentro().equals(movCentro));
     }
 
     public Movadoj save(Movadoj movadoj) {
@@ -42,23 +72,5 @@ public class MovadojService {
 
     public void deleteById(Integer id) {
         movadojRepository.deleteById(id);
-    }
-
-
-    /**
-     * MÉTODO ACTUALIZADO:
-     * Ahora este método filtra las visitas activas por el día actual Y por el centro del usuario.
-     */
-    public Page<Movadoj> findVisitasActivas(String keyword, Integer movCentro, Pageable pageable) { // <- Recibe movCentro
-
-        String fechaHoy = LocalDate.now().format(dtfFecha);
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            // Llama al NUEVO método del repositorio con fecha, centro y búsqueda
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(fechaHoy, movCentro, keyword, keyword, pageable);
-        } else {
-            // Llama al NUEVO método del repositorio con fecha y centro
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(fechaHoy, movCentro, pageable);
-        }
     }
 }
