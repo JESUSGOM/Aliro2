@@ -76,8 +76,8 @@ public class IncidenciaController {
 
         // Si es una incidencia nueva (no tiene ID), seteamos la fecha, hora y usuario
         if (incidencia.getIncId() == null) {
-            DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
-            DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
+            DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
+            DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HHmm");
 
             incidencia.setIncFecha(LocalDate.now().format(dtfFecha));
             incidencia.setIncHora(LocalTime.now().format(dtfHora));

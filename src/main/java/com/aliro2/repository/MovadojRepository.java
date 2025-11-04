@@ -1,35 +1,35 @@
 package com.aliro2.repository;
 
 import com.aliro2.model.Movadoj;
-import org.springframework.data.domain.Page; // <- 1. Importar Page
-import org.springframework.data.domain.Pageable; // <- 2. Importar Pageable
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
 
-    // --- MÉTODOS EXISTENTES (para informes, etc.) ---
-    Page<Movadoj> findByMovFechaSalidaIsNullOrderByMovOrdenDesc(Pageable pageable);
+    // --- MÉTODOS EXISTENTES (con filtro de centro añadido) ---
 
-    Page<Movadoj> findByMovFechaSalidaIsNullAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String nombreKeyword, String apellidoKeyword, Pageable pageable);
+    // 1. Busca visitas activas (sin fecha de salida) POR CENTRO - PAGINADO
+    Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
 
-    List<Movadoj> findByMovFechaSalidaIsNullOrderByMovOrdenDesc();
+    // 2. Busca visitas activas (sin fecha de salida) POR CENTRO y CON BÚSQUEDA - PAGINADO
+    // (Añadimos el filtro MovCentroEquals después de IsNull)
+    Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+
+    // 3. Versión sin paginación (para findAll si aplica) POR CENTRO
+    List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
 
 
-    // --- 1. NUEVO MÉTODO (Paginado, SÓLO de HOY) ---
-    /**
-     * Busca visitas activas (Salida IS NULL) Y (And) que la fecha de entrada
-     * sea igual a la fecha de hoy que le pasamos.
-     */
-    Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsOrderByMovOrdenDesc(String fechaHoy, Pageable pageable);
+    // --- MÉTODOS ANTES NUEVOS, AHORA CON FILTRO DE CENTRO (para "sólo de hoy") ---
 
-    // --- 2. NUEVO MÉTODO (Paginado, de HOY y CON BÚSQUEDA) ---
-    /**
-     * Busca visitas activas (Salida IS NULL) Y que la fecha de entrada sea la de HOY
-     * Y (And) que el nombre O el apellido coincidan con el keyword.
-     */
-    Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String fechaHoy, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+    // 4. Paginado, SÓLO de HOY Y POR CENTRO
+    Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, Pageable pageable);
+
+    // 5. Paginado, de HOY, CON BÚSQUEDA Y POR CENTRO
+    Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
 
 }
