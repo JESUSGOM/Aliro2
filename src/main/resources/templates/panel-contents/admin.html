@@ -1,27 +1,15 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
-
 <div th:fragment="content">
 
     <style>
-        .user-info-bar {
-            background-color: #fff;
-            padding: 8px 40px;
-            border-bottom: 1px solid #e7e7e7;
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            text-align: left;
-        }
-
         .admin-container {
+            /* Eliminamos el fondo y altura, ahora lo maneja el layout */
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alinea arriba para que no se centre verticalmente */
+            align-items: flex-start;
             padding-top: 50px;
-            background-color: #fff;
-            height: calc(100vh - 100px); /* Ajusta la altura si es necesario */
         }
 
         .form-box {
@@ -31,78 +19,16 @@
             background-color: #f9f9f9;
         }
 
-        .form-box label {
-            display: block;
-            margin-bottom: 5px;
-        }
+        /* ... (resto de estilos de .form-box) ... */
 
-        .form-box input, .form-box select, .form-box button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        .form-box button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .button-group a.btn-menu {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745; /* Fondo verde */
-            color: white;             /* Texto blanco */
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: background-color 0.2s;
-        }
-
-        .button-group a.btn-menu:hover {
-            background-color: #218838; /* Verde oscuro (hover) */
-        }
     </style>
-
-    <div class="user-info-bar">
-        <span>INSTITUTO TECNOLÓGICO DE CANARIAS, S.A. (TENERIFE) Usuario => </span>
-
-        <span th:text="|**${#strings.substring(usuarioLogueado.usuDni, 2, 4)}*${#strings.substring(usuarioLogueado.usuDni, 5, 6)}**${#strings.substring(usuarioLogueado.usuDni, 8, 9)}|"></span>
-
-        <span th:text="| ${usuarioLogueado.usuApellidoUno} ${usuarioLogueado.usuApellidoDos ?: ''}, ${usuarioLogueado.usuNombre}|"></span>
-
-        <span th:if="${usuarioLogueado.usuCargo}" th:text="| ${usuarioLogueado.usuCargo}|"></span>
-
-        <span th:if="${usuarioLogueado.usuTipo == 'Z'}"> <=> SUPERUSUARIO</span>
-        <span th:if="${usuarioLogueado.usuTipo == 'A'}"> <=> ADMINISTRADOR</span>
-    </div>
 
     <div class="admin-container">
         <div class="form-box">
             <form th:action="@{/reportes/generar}" method="POST">
-
-                <label for="mesano">Mes y año para el informe</label>
-                <input type="month" id="mesano" name="mesano" required>
-
-                <label for="centro">de</label>
-                <select id="centro" name="centro" required>
-                    <option value="" disabled selected>----------------</option>
-                    <option value="1">Machado</option>
-                    <option value="2">Cebrián</option>
-                </select>
-
-                <button type="submit">Generar Informe</button>
             </form>
         </div>
     </div>
 </div>
-
 </body>
 </html>

@@ -143,4 +143,56 @@
     </div>
 </div>
 </body>
+</html><!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .dashboard-column {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .button-group {
+            background-color: #28a745;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .button-group a.btn-menu {
+            width: 100%;
+            background-color: #ccc;
+            font-weight: bold;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .button-group a.btn-menu:hover {
+            background-color: #bbb;
+            border-color: #bbb;
+        }
+    </style>
+
+    <div class="d-flex flex-wrap" style="gap: 20px;">
+        <div class="dashboard-column">
+            <div class="button-group">
+                <a th:href="@{/visitas/entrada}" class="btn-menu">Entrada Visitantes</a>
+                <a th:href="@{/visitas/salida}" class="btn-menu">Salida Visitantes</a>
+                <a th:href="@{/visitas/informes}" class="btn-menu">Informes Visitantes</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>

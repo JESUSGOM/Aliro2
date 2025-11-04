@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .form-container { max-width: 900px; margin: 30px auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-container h2 { text-align: center; margin-bottom: 25px; }
+        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+    </style>
+
+    <div class="form-container">
+        <h2 th:text="${pageTitle}">Gestión de Proveedor</h2>
+
+        <form th:action="@{/proveedores/guardar}" th:object="${proveedor}" method="post">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="prdCif" class="form-label">CIF</label>
+                    <input type="text" class="form-control" id="prdCif" th:field="*{id.prdCif}" th:readonly="${isEditMode}" required>
+                </div>
+                <input type="hidden" th:field="*{id.prdCentro}" />
+
+                <div class="col-md-6 mb-3">
+                    <label for="denominacion" class="form-label">Denominación / Nombre</label>
+                    <input type="text" class="form-control" id="denominacion" th:field="*{prdDenominacion}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="contacto" class="form-label">Persona de Contacto</label>
+                    <input type="text" class="form-control" id="contacto" th:field="*{prdContacto}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" th:field="*{prdTelefono}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{prdEmail}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <textarea class="form-control" id="direccion" rows="2" th:field="*{prdDireccion}"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="municipio" class="form-label">Municipio</label>
+                    <input type="text" class="form-control" id="municipio" th:field="*{prdMunicipio}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="provincia" class="form-label">Provincia</label>
+                    <input type="text" class="form-control" id="provincia" th:field="*{prdProvincia}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="cp" class="form-label">Código Postal</label>
+                    <input type="text" class="form-control" id="cp" th:field="*{prdCodigopostal}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="notas" class="form-label">Notas</label>
+                <textarea class="form-control" id="notas" rows="3" th:field="*{prdNotas}"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/proveedores/consultar}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+                <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Proveedor</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
