@@ -10,26 +10,13 @@ import java.util.List;
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
 
-    /**
-     * Busca visitas activas (sin fecha de salida) - PAGINADO
-     */
+    // --- MÉTODOS EXISTENTES (para informes, etc.) ---
     Page<Movadoj> findByMovFechaSalidaIsNullOrderByMovOrdenDesc(Pageable pageable);
 
-    /**
-     * MÉTODO CORREGIDO:
-     * Busca visitas activas (MovFechaSalida IsNull)
-     * Y (And) donde el nombre (MovNombre) contenga el keyword
-     * O (Or) el primer apellido (MovApellidoUno) contenga el keyword.
-     * Ignora mayúsculas/minúsculas (ContainingIgnoreCase).
-     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String nombreKeyword, String apellidoKeyword, Pageable pageable);
 
-
-    /**
-     * Este método lo mantenemos por si es usado en otra parte del código
-     * (Aunque para la paginación usaremos los métodos de arriba).
-     */
     List<Movadoj> findByMovFechaSalidaIsNullOrderByMovOrdenDesc();
+
 
     // --- 1. NUEVO MÉTODO (Paginado, SÓLO de HOY) ---
     /**
@@ -44,4 +31,5 @@ public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
      * Y (And) que el nombre O el apellido coincidan con el keyword.
      */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String fechaHoy, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+
 }

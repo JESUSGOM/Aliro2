@@ -17,9 +17,8 @@ public class MovadojService {
 
     private final MovadojRepository movadojRepository;
 
-    // Formateador para la fecha (dd/MM/yy)
+    // Formateador para la fecha (tu BD usa dd/MM/yy)
     private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("dd/MM/yy");
-
 
     @Autowired
     public MovadojService(MovadojRepository movadojRepository) {
