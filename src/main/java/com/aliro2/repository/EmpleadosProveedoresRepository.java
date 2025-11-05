@@ -32,4 +32,6 @@ public interface EmpleadosProveedoresRepository extends JpaRepository<EmpleadosP
      * Busca todos los empleados de un centro (sin paginar).
      */
     List<EmpleadosProveedores> findByEmpCentroEquals(Integer empCentro);
+
+    Optional<Object> findByNifAncCentro(String movEmpNif, Integer centroUsuario);
 }

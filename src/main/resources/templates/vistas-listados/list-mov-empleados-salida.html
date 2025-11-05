@@ -44,7 +44,7 @@
                 <td th:text="${#temporals.format(mov.movFechaHoraEntrada, 'dd/MM/yyyy HH:mm')}"></td>
                 <td>
                     <form th:action="@{/movimientos-empleados/registrar-salida/{id}(id=${mov.movId}, page=${movimientosPage.number}, keyword=${keyword})}" method="post">
-                        <button type="submit" class.btn-accion-salida">Registrar Salida</button>
+                        <button type="submit" class="btn-accion-salida">Registrar Salida</button>
                     </form>
                 </td>
             </tr>

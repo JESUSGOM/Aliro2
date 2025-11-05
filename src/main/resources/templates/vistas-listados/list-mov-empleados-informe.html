@@ -41,7 +41,7 @@
         <td th:text="${#temporals.format(mov.movFechaHoraEntrada, 'dd/MM/yyyy HH:mm')}"></td>
         <td th:text="${mov.movFechaHoraSalida != null} ? ${#temporals.format(mov.movFechaHoraSalida, 'dd/MM/yyyy HH:mm')} : '---'"></td>
         <td class="table-actions">
-          <a sec:authorize="hasAuthority('ROLE_Z')" th:if="${#httpServletRequest.requestURI.contains('eliminar')}"
+          <a sec:authorize="hasAnyRole('Z', 'Y')" th:if="${#httpServletRequest.requestURI.contains('eliminar')}"
              th:href="@{/movimientos-empleados/eliminar/{id}(id=${mov.movId})}"
              class="btn btn-sm btn-danger">
             Eliminar

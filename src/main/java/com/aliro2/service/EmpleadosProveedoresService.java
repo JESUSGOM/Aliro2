@@ -65,4 +65,8 @@ public class EmpleadosProveedoresService {
     public List<EmpleadosProveedores> findAll() {
         return empleadosProveedoresRepository.findAll();
     }
+
+    public Optional<Object> findByNifAndCentro(String movEmpNif, Integer centroUsuario) {
+        return empleadosProveedoresRepository.findByNifAncCentro(movEmpNif, centroUsuario);
+    }
 }

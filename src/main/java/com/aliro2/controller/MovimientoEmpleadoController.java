@@ -32,7 +32,9 @@ public class MovimientoEmpleadoController {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public MovimientoEmpleadoController(MovimientoEmpleadoService movimientoService, EmpleadosProveedoresService empleadoService, UsuarioRepository usuarioRepository) {
+    public MovimientoEmpleadoController(MovimientoEmpleadoService movimientoService,
+                                        EmpleadosProveedoresService empleadoService,
+                                        UsuarioRepository usuarioRepository) {
         this.movimientoService = movimientoService;
         this.empleadoService = empleadoService;
         this.usuarioRepository = usuarioRepository;
@@ -54,11 +56,10 @@ public class MovimientoEmpleadoController {
     public String mostrarFormularioEntrada(Model model, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
 
-        // 1. Prepara un movimiento nuevo
         MovimientoEmpleado movimiento = new MovimientoEmpleado();
         movimiento.setMovCentro(centroUsuario);
 
-        // 2. Obtiene la lista de empleados de ESE centro para el <select>
+        // Obtiene la lista de empleados de ESE centro para el <select>
         List<EmpleadosProveedores> empleados = empleadoService.findByCentro(centroUsuario);
 
         model.addAttribute("movimiento", movimiento);
@@ -81,7 +82,12 @@ public class MovimientoEmpleadoController {
             return "redirect:/panel?error=accesoDenegado";
         }
 
-        // Seteamos la fecha y hora de entrada
+        // Obtenemos el empleado seleccionado (por NIF) para coger su CIF
+        // El NIF viene del th:field="*{movEmpNif}" del formulario
+        EmpleadosProveedores empleado = empleadoService.findByNifAndCentro(movimiento.getMovEmpNif(), centroUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Empleado no válido"));
+
+        movimiento.setMovPrdCif(empleado.getEmpPrdCif()); // Asignamos el CIF del proveedor
         movimiento.setMovFechaHoraEntrada(LocalDateTime.now());
 
         movimientoService.save(movimiento);
@@ -100,7 +106,6 @@ public class MovimientoEmpleadoController {
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 10);
 
-        // Llama al servicio para buscar movimientos ACTIVOS
         Page<MovimientoEmpleado> movimientosPage = movimientoService.findActivosByCentro(centroUsuario, keyword, pageable);
 
         model.addAttribute("movimientosPage", movimientosPage);
@@ -154,7 +159,6 @@ public class MovimientoEmpleadoController {
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 10);
 
-        // Llama al servicio para buscar TODOS los movimientos
         Page<MovimientoEmpleado> movimientosPage = movimientoService.findAllByCentro(centroUsuario, keyword, pageable);
 
         model.addAttribute("movimientosPage", movimientosPage);
@@ -182,6 +186,7 @@ public class MovimientoEmpleadoController {
         // Seguridad: Valida que el registro pertenezca al centro del usuario
         MovimientoEmpleado movimiento = movimientoService.findByIdAndCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de movimiento inválido o acceso denegado"));
+
 
         movimientoService.deleteById(movimiento.getMovId());
 
