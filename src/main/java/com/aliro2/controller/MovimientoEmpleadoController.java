@@ -1,11 +1,11 @@
 package com.aliro2.controller;
 
 import com.aliro2.model.EmpleadosProveedores;
-import com.aliro2.model.MovimientosEmpleados;
+import com.aliro2.model.MovimientoEmpleado;
 import com.aliro2.model.Usuario;
 import com.aliro2.repository.UsuarioRepository;
 import com.aliro2.service.EmpleadosProveedoresService;
-import com.aliro2.service.MovimientosEmpleadosService;
+import com.aliro2.service.MovimientoEmpleadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,12 +27,12 @@ import java.util.stream.IntStream;
 @Controller
 public class MovimientoEmpleadoController {
 
-    private final MovimientosEmpleadosService movimientoService;
+    private final MovimientoEmpleadoService movimientoService;
     private final EmpleadosProveedoresService empleadoService;
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public MovimientoEmpleadoController(MovimientosEmpleadosService movimientoService, EmpleadosProveedoresService empleadoService, UsuarioRepository usuarioRepository) {
+    public MovimientoEmpleadoController(MovimientoEmpleadoService movimientoService, EmpleadosProveedoresService empleadoService, UsuarioRepository usuarioRepository) {
         this.movimientoService = movimientoService;
         this.empleadoService = empleadoService;
         this.usuarioRepository = usuarioRepository;
@@ -55,7 +55,7 @@ public class MovimientoEmpleadoController {
         Integer centroUsuario = getCentroUsuario(authentication);
 
         // 1. Prepara un movimiento nuevo
-        MovimientosEmpleados movimiento = new MovimientosEmpleados();
+        MovimientoEmpleado movimiento = new MovimientoEmpleado();
         movimiento.setMovCentro(centroUsuario);
 
         // 2. Obtiene la lista de empleados de ESE centro para el <select>
@@ -73,7 +73,7 @@ public class MovimientoEmpleadoController {
      * Se activa desde el formulario form-mov-empleado-entrada.html
      */
     @PostMapping("/movimientos-empleados/guardar-entrada")
-    public String guardarEntrada(@ModelAttribute("movimiento") MovimientosEmpleados movimiento, Authentication authentication) {
+    public String guardarEntrada(@ModelAttribute("movimiento") MovimientoEmpleado movimiento, Authentication authentication) {
 
         Integer centroUsuario = getCentroUsuario(authentication);
         // Seguridad: Asegurarse de que el centro coincide
@@ -101,7 +101,7 @@ public class MovimientoEmpleadoController {
         Pageable pageable = PageRequest.of(page, 10);
 
         // Llama al servicio para buscar movimientos ACTIVOS
-        Page<MovimientosEmpleados> movimientosPage = movimientoService.findActivosByCentro(centroUsuario, keyword, pageable);
+        Page<MovimientoEmpleado> movimientosPage = movimientoService.findActivosByCentro(centroUsuario, keyword, pageable);
 
         model.addAttribute("movimientosPage", movimientosPage);
         model.addAttribute("keyword", keyword);
@@ -129,7 +129,7 @@ public class MovimientoEmpleadoController {
         Integer centroUsuario = getCentroUsuario(authentication);
 
         // Seguridad: Busca el movimiento y valida que pertenezca al centro del usuario
-        MovimientosEmpleados movimiento = movimientoService.findByIdAndCentro(id, centroUsuario)
+        MovimientoEmpleado movimiento = movimientoService.findByIdAndCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de movimiento inválido o acceso denegado"));
 
         movimiento.setMovFechaHoraSalida(LocalDateTime.now());
@@ -155,7 +155,7 @@ public class MovimientoEmpleadoController {
         Pageable pageable = PageRequest.of(page, 10);
 
         // Llama al servicio para buscar TODOS los movimientos
-        Page<MovimientosEmpleados> movimientosPage = movimientoService.findAllByCentro(centroUsuario, keyword, pageable);
+        Page<MovimientoEmpleado> movimientosPage = movimientoService.findAllByCentro(centroUsuario, keyword, pageable);
 
         model.addAttribute("movimientosPage", movimientosPage);
         model.addAttribute("keyword", keyword);
@@ -180,7 +180,7 @@ public class MovimientoEmpleadoController {
         Integer centroUsuario = getCentroUsuario(authentication);
 
         // Seguridad: Valida que el registro pertenezca al centro del usuario
-        MovimientosEmpleados movimiento = movimientoService.findByIdAndCentro(id, centroUsuario)
+        MovimientoEmpleado movimiento = movimientoService.findByIdAndCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de movimiento inválido o acceso denegado"));
 
         movimientoService.deleteById(movimiento.getMovId());
