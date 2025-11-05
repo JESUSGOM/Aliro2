@@ -84,7 +84,7 @@ public class MovimientoEmpleadoController {
 
         // Obtenemos el empleado seleccionado (por NIF) para coger su CIF
         // El NIF viene del th:field="*{movEmpNif}" del formulario
-        EmpleadosProveedores empleado = empleadoService.findByNifAndCentro(movimiento.getMovEmpNif(), centroUsuario)
+        EmpleadosProveedores empleado = (EmpleadosProveedores) empleadoService.findByNifAndCentro(movimiento.getMovEmpNif(), centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Empleado no válido"));
 
         movimiento.setMovPrdCif(empleado.getEmpPrdCif()); // Asignamos el CIF del proveedor
