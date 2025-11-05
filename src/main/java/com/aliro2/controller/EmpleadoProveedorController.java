@@ -137,6 +137,9 @@ public class EmpleadoProveedorController {
             return "redirect:/empleados-proveedor/consultar?error=accesoDenegado";
         }
 
+        // Lógica para formatear fechas si es necesario (asumiendo que el input de HTML es yyyy-MM-dd)
+        // Si usas <input type="date">, Spring lo convierte a LocalDate automáticamente.
+
         empleadoService.save(empleado);
         return "redirect:/empleados-proveedor/consultar"; // Vuelve a la lista
     }

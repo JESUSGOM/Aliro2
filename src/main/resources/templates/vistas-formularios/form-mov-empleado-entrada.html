@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <style>
+    .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .form-container h2 { text-align: center; margin-bottom: 25px; }
+    .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+  </style>
+
+  <div class="form-container">
+    <h2 th:text="${pageTitle}">Registrar Entrada de Empleado</h2>
+
+    <form th:action="@{/movimientos-empleados/guardar-entrada}" th:object="${movimiento}" method="post">
+
+      <input type="hidden" th:field="*{movCentro}" />
+
+      <div class="mb-3">
+        <label for="empleado" class="form-label">Empleado de Proveedor (*)</label>
+        <select class="form-select" id="empleado" th:field="*{movEmpNif}" required>
+          <option value="" disabled selected>-- Seleccione un Empleado --</option>
+          <option th:if="${empleados.empty}" disabled>-- No hay empleados creados --</option>
+          <option th:each="emp : ${empleados}"
+                  th:value="${emp.empNif}"
+                  th:text="|${emp.empApellido1} ${emp.empApellido2}, ${emp.empNombre} (${emp.empNif}) - ${emp.empPrdCif}|"></option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <a th:href="@{/panel}" class="btn btn-secondary" style="width: 48%;">Cancelar</a>
+        <button type="submit" class="btn btn-success" style="width: 48%;">Registrar Entrada</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
