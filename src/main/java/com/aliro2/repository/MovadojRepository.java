@@ -16,6 +16,7 @@ public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
 
     /**
      * (Sin Búsqueda) Busca visitas activas (Salida IS NULL) + de HOY (FechaEntrada) + POR CENTRO.
+     * ESTE ES EL MÉTODO QUE NECESITAS.
      */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, Pageable pageable);
 
@@ -46,7 +47,25 @@ public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
     List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
 
     /**
-     * (Seguridad) Busca una visita por ID y Centro
+     * (Seguridad) Busca una visita por su ID y Centro.
      */
     Optional<Movadoj> findByMovOrdenAndMovCentro(Integer movOrden, Integer movCentro);
+
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Busca TODOS los movimientos (activos y cerrados) de un CENTRO, paginado.
+     */
+    Page<Movadoj> findByMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
+
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Busca TODOS los movimientos (activos y cerrados) de un CENTRO con un KEYWORD, paginado.
+     */
+    Page<Movadoj> findByMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(
+            Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+
+
+
+
+
 }

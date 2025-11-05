@@ -6,7 +6,7 @@
     <style>
         .form-container {
             max-width: 900px;
-            margin: 30px auto;
+            margin: 0 auto;
             padding: 25px;
             background-color: #fff;
             border-radius: 8px;
@@ -16,10 +16,40 @@
             text-align: center;
             margin-bottom: 25px;
         }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Estilos para el botón Grabar (verde) y Cancelar (gris) */
+        .btn-grabar {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            font-size: 16px; /* Coincide con el estilo de login */
+        }
+        .btn-grabar:hover {
+            background-color: #218838;
+            color: white;
+        }
+        .btn-cancelar {
+            background-color: #6c757d;
+            color: white;
+            font-weight: bold;
+            border: none;
+            font-size: 16px;
+        }
+        .btn-cancelar:hover {
+            background-color: #5a6268;
+            color: white;
+        }
     </style>
 
     <div class="form-container">
-        <h2 th:text="${pageTitle}">Gestión de Visita</h2>
+        <h2 th:text="${pageTitle}">Registrar Visita</h2>
 
         <form th:action="@{/visitas/guardar}" th:object="${visita}" method="post">
 
@@ -29,37 +59,74 @@
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" th:field="*{movNombre}" required>
+                    <input type="text" class="form-control" id="nombre" th:field="*{movNombre}" placeholder="Nombre del visitante" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="apellido1" class="form-label">Primer Apellido</label>
-                    <input type="text" class="form-control" id="apellido1" th:field="*{movApellidoUno}" required>
+                    <input type="text" class="form-control" id="apellido1" th:field="*{movApellidoUno}" placeholder="Primer apellido" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="apellido2" class="form-label">Segundo Apellido</label>
-                    <input type="text" class="form-control" id="apellido2" th:field="*{movApellidoDos}">
+                    <input type="text" class="form-control" id="apellido2" th:field="*{movApellidoDos}" placeholder="Segundo apellido">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="procedencia" class="form-label">Procede</label>
+                <input type="text" class="form-control" id="procedencia" th:field="*{movProcedencia}" placeholder="Indicar de donde procede solo si no es personal del ITC o empresa de alquiler">
+            </div>
+
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="destino" class="form-label">Destino</label>
+                    <select class="form-select" id="destino" th:field="*{movDestino}">
+                        <option value="" disabled selected>-- Seleccione Destino (Empresa Alquiler) --</option>
+                        <option th:each="alq : ${alquileres}"
+                                th:value="${alq.alqEmpresa}"
+                                th:text="${alq.alqEmpresa}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="planta" class="form-label">Planta</label>
+                    <select class="form-select" id="planta" th:field="*{movPlanta}">
+                        <option value="" disabled selected>-- Seleccione Planta --</option>
+                        <option th:each="pl : ${plantas}"
+                                th:value="${pl.pltPlanta}"
+                                th:text="${pl.pltPlanta}"></option>
+                    </select>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="procedencia" class="form-label">Procedencia</label>
-                    <input type="text" class="form-control" id="procedencia" th:field="*{movProcedencia}">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="text" class="form-control" id="fecha"
+                           th:placeholder="${#temporals.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}" disabled>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="destino" class="form-label">Destino</label>
-                    <input type="text" class="form-control" id="destino" th:field="*{movDestino}">
+                    <label for="hora" class="form-label">Hora</label>
+                    <input type="text" class="form-control" id="hora"
+                           th:placeholder="${#temporals.format(T(java.time.LocalTime).now(), 'HH:mm')}" disabled>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="motivo" class="form-label">Motivo de la Visita</label>
-                <textarea class="form-control" id="motivo" rows="3" th:field="*{movMotivo}"></textarea>
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="motivo" class="form-label">Motivo de la Visita</label>
+                    <textarea class="form-control" id="motivo" rows="1" th:field="*{movMotivo}" placeholder="Motivo"></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="vehiculo" class="form-label">Vehículo</label>
+                    <select class="form-select" id="vehiculo" th:field="*{movVehiculo}">
+                        <option value="No" selected>No</option>
+                        <option value="Si">Si</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-between">
-                <a th:href="@{/panel}" class="btn btn-secondary w-25">Cancelar</a>
-                <button type="submit" class="btn btn-success w-75">Registrar</button>
+            <div class="form-actions">
+                <a th:href="@{/panel}" class="btn btn-cancelar" style="width: 30%;">Cancelar</a>
+                <button type="submit" class="btn btn-grabar w-75">Grabar</button>
             </div>
         </form>
     </div>

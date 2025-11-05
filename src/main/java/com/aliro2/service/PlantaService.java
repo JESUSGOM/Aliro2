@@ -11,8 +11,22 @@ import java.util.Optional;
 @Service
 public class PlantaService {
 
+    private final PlantaRepository plantaRepository;
+
     @Autowired
-    private PlantaRepository plantaRepository;
+    public PlantaService(PlantaRepository plantaRepository) {
+        this.plantaRepository = plantaRepository;
+    }
+
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Llama al repositorio para obtener las plantas por centro.
+     */
+    public List<Planta> findByCentro(Integer pltCentro) {
+        return plantaRepository.findByPltCentro(pltCentro);
+    }
+
+    // --- Métodos CRUD Estándar (ya los tienes) ---
 
     public List<Planta> findAll() {
         return plantaRepository.findAll();
