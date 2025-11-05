@@ -5,78 +5,44 @@
 <div th:fragment="content">
 
     <style>
-        .user-info-bar {
-            background-color: #fff;
-            padding: 8px 40px;
-            border-bottom: 1px solid #e7e7e7;
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            text-align: left;
-        }
-
-        .dashboard-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* Espacio entre las columnas */
-            padding: 20px 40px; /* Margen a los lados */
-            background-color: #e9ecef; /* Fondo gris claro */
-        }
-
         .dashboard-column {
-            flex: 1; /* Cada columna ocupa el mismo espacio */
-            min-width: 300px; /* Ancho mínimo para responsividad */
+            flex: 1;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Espacio entre los grupos de botones */
+            gap: 15px;
         }
 
         .button-group {
-            background-color: #28a745; /* Fondo verde para el grupo */
+            background-color: #28a745;
             padding: 10px;
             border-radius: 4px;
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Espacio entre botones */
+            gap: 8px;
         }
 
-        /* * ESTILO DE BOTÓN CORREGIDO:
-         * Fondo gris (#ccc) y texto en negrita y centrado
-        */
         .button-group a.btn-menu {
             width: 100%;
-            background-color: #ccc; /* Fondo color borde (GRIS) */
-            font-weight: bold;      /* Texto en negrita */
-            color: #333;             /* Texto oscuro */
-            border: 1px solid #ccc;   /* Borde del mismo color */
             padding: 10px;
-            text-align: center;     /* Texto centrado */
-            font-size: 14px;
+            background-color: #28a745; /* Fondo verde */
+            color: white;             /* Texto blanco */
+            border: none;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
             border-radius: 4px;
-            text-decoration: none; /* Quita el subrayado del enlace */
-            transition: background-color 0.2s, border-color 0.2s;
+            text-decoration: none;
+            transition: background-color 0.2s;
         }
 
         .button-group a.btn-menu:hover {
-            background-color: #bbb; /* Gris un poco más oscuro */
-            border-color: #bbb;
+            background-color: #218838;
         }
     </style>
 
-    <div class="user-info-bar">
-        <span>INSTITUTO TECNOLOGICO DE CANARIAS, S.A. (TENERIFE) => Usuario => </span>
-
-        <span th:text="|**${#strings.substring(usuarioLogueado.usuDni, 2, 4)}*${#strings.substring(usuarioLogueado.usuDni, 5, 6)}**${#strings.substring(usuarioLogueado.usuDni, 8, 9)}|"></span>
-
-        <span th:text="| ${usuarioLogueado.usuApellidoUno} ${usuarioLogueado.usuApellidoDos ?: ''}, ${usuarioLogueado.usuNombre}|"></span>
-        <span th:if="${usuarioLogueado.usuCargo}" th:text="| ${usuarioLogueado.usuCargo}|"></span>
-
-        <span> <=> SUPERUSUARIO</span>
-    </div>
-
-
-    <div class="dashboard-container">
+    <div class="d-flex flex-wrap" style="gap: 20px;">
 
         <div class="dashboard-column">
             <div class="button-group">
@@ -138,58 +104,6 @@
             </div>
             <div class="button-group">
                 <a th:href="@{/turnos/informes}" class="btn-menu">Informes Entre Turnos</a>
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html><!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<body>
-<div th:fragment="content">
-
-    <style>
-        .dashboard-column {
-            flex: 1;
-            min-width: 300px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .button-group {
-            background-color: #28a745;
-            padding: 10px;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .button-group a.btn-menu {
-            width: 100%;
-            background-color: #ccc;
-            font-weight: bold;
-            color: #333;
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-        .button-group a.btn-menu:hover {
-            background-color: #bbb;
-            border-color: #bbb;
-        }
-    </style>
-
-    <div class="d-flex flex-wrap" style="gap: 20px;">
-        <div class="dashboard-column">
-            <div class="button-group">
-                <a th:href="@{/visitas/entrada}" class="btn-menu">Entrada Visitantes</a>
-                <a th:href="@{/visitas/salida}" class="btn-menu">Salida Visitantes</a>
-                <a th:href="@{/visitas/informes}" class="btn-menu">Informes Visitantes</a>
             </div>
         </div>
     </div>
