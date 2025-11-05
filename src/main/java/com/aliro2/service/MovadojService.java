@@ -26,33 +26,42 @@ public class MovadojService {
     }
 
     /**
-     * MÉTODO CORREGIDO:
-     * Ahora este método filtra las visitas activas
-     * para que muestre SÓLO las del día actual Y del centro del usuario.
+     * Busca visitas activas SÓLO DE HOY y POR CENTRO.
+     * (Usado para la pantalla /visitas/salida)
      */
     public Page<Movadoj> findVisitasActivas(String keyword, Integer movCentro, Pageable pageable) {
 
-        // 1. Obtenemos la fecha de hoy y la formateamos como "yyyyMMdd"
         String fechaHoy = LocalDate.now().format(dtfFecha);
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            // 2. Si hay búsqueda, llama al método de búsqueda CON FECHA y CON CENTRO
+            // Llama al método de búsqueda CON FECHA y CON CENTRO
             return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(fechaHoy, movCentro, keyword, keyword, pageable);
         } else {
-            // 3. Si no hay búsqueda, llama al método simple CON FECHA y CON CENTRO
+            // Llama al método simple CON FECHA y CON CENTRO
             return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(fechaHoy, movCentro, pageable);
+        }
+    }
+
+    /**
+     * Busca TODAS las visitas activas (de cualquier fecha) y POR CENTRO.
+     * (Usado para la pantalla /visitas/informes)
+     */
+    public Page<Movadoj> findTodasVisitasActivasPorCentro(String keyword, Integer movCentro, Pageable pageable) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(movCentro, keyword, keyword, pageable);
+        } else {
+            return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro, pageable);
         }
     }
 
     // --- MÉTODOS CRUD ESTÁNDAR ---
 
-    public List<Movadoj> findAll() {
-        return movadojRepository.findAll();
-    }
+    // Este método ya no es seguro porque no filtra por centro.
+    // Lo reemplazamos por 'findAllByCentro'.
+    // public List<Movadoj> findAll() { ... }
 
     // Método para buscar todas las visitas de un centro (para informes)
     public List<Movadoj> findAllByCentro(Integer movCentro) {
-        // Asumiendo que el informe general debe ser de visitas activas
         return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro);
     }
 
@@ -60,7 +69,7 @@ public class MovadojService {
         return movadojRepository.findById(id);
     }
 
-    // Servicio para asegurar que solo se editen visitas del centro del usuario
+    // (Seguridad) Busca solo si el ID pertenece al centro del usuario
     public Optional<Movadoj> findByIdAndMovCentro(Integer id, Integer movCentro) {
         return movadojRepository.findById(id)
                 .filter(movadoj -> movadoj.getMovCentro().equals(movCentro));

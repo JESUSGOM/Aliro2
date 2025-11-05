@@ -53,4 +53,116 @@ public class Proveedor {
 
     @Column(name = "PrdFechaExpiracion")
     private LocalDate prdFechaExpiracion;
+
+    public ProveedorId getId() {
+        return id;
+    }
+
+    public void setId(ProveedorId id) {
+        this.id = id;
+    }
+
+    public String getPrdDenominacion() {
+        return prdDenominacion;
+    }
+
+    public void setPrdDenominacion(String prdDenominacion) {
+        this.prdDenominacion = prdDenominacion;
+    }
+
+    public String getPrdContacto() {
+        return prdContacto;
+    }
+
+    public void setPrdContacto(String prdContacto) {
+        this.prdContacto = prdContacto;
+    }
+
+    public String getPrdTelefono() {
+        return prdTelefono;
+    }
+
+    public void setPrdTelefono(String prdTelefono) {
+        this.prdTelefono = prdTelefono;
+    }
+
+    public String getPrdEmail() {
+        return prdEmail;
+    }
+
+    public void setPrdEmail(String prdEmail) {
+        this.prdEmail = prdEmail;
+    }
+
+    public String getPrdDireccion() {
+        return prdDireccion;
+    }
+
+    public void setPrdDireccion(String prdDireccion) {
+        this.prdDireccion = prdDireccion;
+    }
+
+    public String getPrdProvincia() {
+        return prdProvincia;
+    }
+
+    public void setPrdProvincia(String prdProvincia) {
+        this.prdProvincia = prdProvincia;
+    }
+
+    public String getPrdMunicipio() {
+        return prdMunicipio;
+    }
+
+    public void setPrdMunicipio(String prdMunicipio) {
+        this.prdMunicipio = prdMunicipio;
+    }
+
+    public String getPrdPais() {
+        return prdPais;
+    }
+
+    public void setPrdPais(String prdPais) {
+        this.prdPais = prdPais;
+    }
+
+    public String getPrdCodigopostal() {
+        return prdCodigopostal;
+    }
+
+    public void setPrdCodigopostal(String prdCodigopostal) {
+        this.prdCodigopostal = prdCodigopostal;
+    }
+
+    public String getPrdWeb() {
+        return prdWeb;
+    }
+
+    public void setPrdWeb(String prdWeb) {
+        this.prdWeb = prdWeb;
+    }
+
+    public String getPrdNotas() {
+        return prdNotas;
+    }
+
+    public void setPrdNotas(String prdNotas) {
+        this.prdNotas = prdNotas;
+    }
+
+    public LocalDate getPrdFechaAlta() {
+        return prdFechaAlta;
+    }
+
+    public void setPrdFechaAlta(LocalDate prdFechaAlta) {
+        this.prdFechaAlta = prdFechaAlta;
+    }
+
+    public LocalDate getPrdFechaExpiracion() {
+        return prdFechaExpiracion;
+    }
+
+    public void setPrdFechaExpiracion(LocalDate prdFechaExpiracion) {
+        this.prdFechaExpiracion = prdFechaExpiracion;
+    }
 }
