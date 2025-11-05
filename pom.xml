@@ -11,6 +11,7 @@
     <groupId>com.aliro2</groupId>
     <artifactId>Aliro2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>Aliro2</name>
     <description>Aliro2</description>
     <url/>

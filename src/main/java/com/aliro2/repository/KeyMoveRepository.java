@@ -35,4 +35,12 @@ public interface KeyMoveRepository extends JpaRepository<KeyMove, Integer> {
      */
     Optional<KeyMove> findByKeyOrdenAndKeyCentro(Integer keyOrden, Integer keyCentro);
 
+    // --- MÉTODOS REQUERIDOS PARA /llaves/recogida ---
+
+
+    /**
+     * AÑADE ESTE NUEVO MÉTODO:
+     * Busca llaves PRESTADAS (Salida IS NULL) + ENTREGADAS HOY (FechaEntrega) + POR CENTRO.
+     */
+    Page<KeyMove> findByKeyCentroEqualsAndKeyFechaRecepcionIsNullAndKeyFechaEntregaEqualsOrderByKeyOrdenDesc(Integer keyCentro, String fechaHoy, Pageable pageable);
 }

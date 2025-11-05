@@ -6,10 +6,6 @@
     .list-container { max-width: 1200px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .list-container h2 { text-align: center; margin-bottom: 25px; }
 
-    /* =================================== */
-    /* INICIO DE LA CORRECCIÓN DE ESTILO   */
-    /* (Botón verde, estilo login)         */
-    /* =================================== */
     .btn-accion-salida {
       width: 100%;
       padding: 10px;
@@ -25,11 +21,7 @@
     .btn-accion-salida:hover {
       background-color: #218838; /* Verde oscuro (hover) */
     }
-    /* =================================== */
-    /* FIN DE LA CORRECCIÓN DE ESTILO     */
-    /* =================================== */
 
-    /* Estilos de Paginación (Bootstrap) */
     .pagination { justify-content: center; margin-top: 20px; }
     .page-item .page-link { color: #28a745; }
     .page-item.active .page-link { background-color: #28a745; border-color: #28a745; color: white; }
@@ -50,8 +42,7 @@
       <thead class="table-dark">
       <tr>
         <th>Nombre</th>
-        <th>Primer Apellido</th>
-        <th>Segundo Apellido</th>
+        <th>Apellidos</th>
         <th>Procedencia</th>
         <th>Fecha Entrada</th>
         <th>Hora Entrada</th>
@@ -65,8 +56,7 @@
 
       <tr th:each="v : ${visitasPage.content}">
         <td th:text="${v.movNombre}"></td>
-        <td th:text="|${v.movApellidoUno}"></td>
-        <td th:text="${v.movApellidoDos}|"></td>
+        <td th:text="|${v.movApellidoUno} ${v.movApellidoDos ?: ''}|"></td>
         <td th:text="${v.movProcedencia}"></td>
         <td th:text="${v.movFechaEntrada}"></td>
         <td th:text="${v.movHoraEntrada}"></td>

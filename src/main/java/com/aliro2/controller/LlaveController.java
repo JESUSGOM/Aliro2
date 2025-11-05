@@ -112,7 +112,7 @@ public class LlaveController {
                                        @RequestParam(name = "page", defaultValue = "0") int page) {
 
         Integer centroUsuario = getCentroUsuario(authentication);
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 7);
 
         // Usamos el método paginado que filtra por centro
         Page<KeyMove> llavesPage = keyMoveService.findLlavesPrestadasPorCentro(centroUsuario, pageable);
@@ -160,7 +160,7 @@ public class LlaveController {
                                        @RequestParam(name = "page", defaultValue = "0") int page) {
 
         Integer centroUsuario = getCentroUsuario(authentication);
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 7);
 
         // Usamos el método paginado que filtra por centro
         Page<KeyMove> llavesPage = keyMoveService.findByCentro(centroUsuario, pageable);

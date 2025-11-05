@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class MovadojService {
+
     private final MovadojRepository movadojRepository;
     private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
 

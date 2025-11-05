@@ -12,60 +12,24 @@ import java.util.Optional;
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
 
-    // --- MÉTODOS PARA /visitas/salida (HOY + CENTRO) ---
-
-    /**
-     * (Sin Búsqueda) Busca visitas activas (Salida IS NULL) + de HOY (FechaEntrada) + POR CENTRO.
-     * ESTE ES EL MÉTODO QUE NECESITAS.
-     */
+    // --- Métodos existentes para /visitas/salida ---
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, Pageable pageable);
-
-    /**
-     * (Con Búsqueda) Busca visitas activas (Salida IS NULL) + de HOY (FechaEntrada) + POR CENTRO,
-     * Y que coincidan con el Nombre O el Apellido.
-     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(String fechaHoy, Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
-
-
-    // --- MÉTODOS PARA /visitas/informes (TODAS LAS ACTIVAS + CENTRO) ---
-
-    /**
-     * (Sin Búsqueda) Busca TODAS las visitas activas (sin filtro de fecha) POR CENTRO.
-     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
-
-    /**
-     * (Con Búsqueda) Busca TODAS las visitas activas (sin filtro de fecha) POR CENTRO,
-     * Y que coincidan con el Nombre O el Apellido.
-     */
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
-
-
-    /**
-     * (Sin Paginación) Busca TODAS las visitas activas POR CENTRO.
-     */
     List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
-
-    /**
-     * (Seguridad) Busca una visita por su ID y Centro.
-     */
     Optional<Movadoj> findByMovOrdenAndMovCentro(Integer movOrden, Integer movCentro);
 
+
+    // --- NUEVOS MÉTODOS PARA /visitas/informes/movimientos ---
+
     /**
-     * AÑADE ESTE MÉTODO:
-     * Busca TODOS los movimientos (activos y cerrados) de un CENTRO, paginado.
+     * 1. (Sin Búsqueda) Busca TODOS los movimientos (activos y cerrados) de un CENTRO, paginado.
      */
     Page<Movadoj> findByMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
 
     /**
-     * AÑADE ESTE MÉTODO:
-     * Busca TODOS los movimientos (activos y cerrados) de un CENTRO con un KEYWORD, paginado.
+     * 2. (Con Búsqueda) Busca TODOS los movimientos (activos y cerrados) de un CENTRO con un KEYWORD, paginado.
      */
-    Page<Movadoj> findByMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(
-            Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
-
-
-
-
-
+    Page<Movadoj> findByMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
 }
