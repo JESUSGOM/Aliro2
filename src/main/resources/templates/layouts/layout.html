@@ -74,15 +74,17 @@
 
 <div class="user-info-bar" th:if="${usuarioLogueado != null}">
     <span>INSTITUTO TECNOLÓGICO DE CANARIAS, S.A. (TENERIFE) Usuario => </span>
+
     <span th:text="|**${#strings.substring(usuarioLogueado.usuDni, 2, 4)}*${#strings.substring(usuarioLogueado.usuDni, 5, 6)}**${#strings.substring(usuarioLogueado.usuDni, 8, 9)}|"></span>
+
     <span th:text="| ${usuarioLogueado.usuApellidoUno} ${usuarioLogueado.usuApellidoDos ?: ''}, ${usuarioLogueado.usuNombre}|"></span>
     <span th:if="${usuarioLogueado.usuCargo}" th:text="| ${usuarioLogueado.usuCargo}|"></span>
 
     <span th:switch="${usuarioLogueado.usuTipo.toUpperCase()}">
-            <span th:case="'Z'"> <=> SUPERUSUARIO</span>
-            <span th:case="'A'"> <=> ADMINISTRADOR</span>
-            <span th:case="'Y'"> <=> SUPERUSUARIO</span>
-        </span>
+        <span th:case="'Z'"> <=> SUPERUSUARIO</span>
+        <span th:case="'A'"> <=> ADMINISTRADOR</span>
+        <span th:case="'Y'"> <=> SUPERUSUARIO</span>
+    </span>
 </div>
 
 <main class="main-content">

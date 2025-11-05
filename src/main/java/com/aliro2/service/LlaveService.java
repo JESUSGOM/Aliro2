@@ -11,11 +11,23 @@ import java.util.Optional;
 @Service
 public class LlaveService {
 
+    private final LlaveRepository llaveRepository;
+
     @Autowired
-    private LlaveRepository llaveRepository;
+    public LlaveService(LlaveRepository llaveRepository) {
+        this.llaveRepository = llaveRepository;
+    }
 
     public List<Llave> findAll() {
         return llaveRepository.findAll();
+    }
+
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Busca todas las llaves de un centro específico.
+     */
+    public List<Llave> findByCentro(Integer llvCentro) {
+        return llaveRepository.findByLlvCentro(llvCentro);
     }
 
     public Optional<Llave> findById(Integer id) {

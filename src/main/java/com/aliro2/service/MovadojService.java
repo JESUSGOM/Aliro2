@@ -26,8 +26,8 @@ public class MovadojService {
     }
 
     /**
-     * Busca visitas activas SÓLO DE HOY y POR CENTRO.
-     * (Usado para la pantalla /visitas/salida)
+     * MÉTODO CORREGIDO:
+     * Filtra visitas activas por el día actual Y por el centro del usuario.
      */
     public Page<Movadoj> findVisitasActivas(String keyword, Integer movCentro, Pageable pageable) {
 
@@ -43,8 +43,8 @@ public class MovadojService {
     }
 
     /**
-     * Busca TODAS las visitas activas (de cualquier fecha) y POR CENTRO.
-     * (Usado para la pantalla /visitas/informes)
+     * MÉTODO CORREGIDO para Informes:
+     * Filtra TODAS las visitas activas (de cualquier fecha) y POR CENTRO.
      */
     public Page<Movadoj> findTodasVisitasActivasPorCentro(String keyword, Integer movCentro, Pageable pageable) {
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -58,9 +58,6 @@ public class MovadojService {
 
     // Este método ya no es seguro porque no filtra por centro.
     // Lo reemplazamos por 'findAllByCentro'.
-    // public List<Movadoj> findAll() { ... }
-
-    // Método para buscar todas las visitas de un centro (para informes)
     public List<Movadoj> findAllByCentro(Integer movCentro) {
         return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro);
     }
@@ -71,8 +68,7 @@ public class MovadojService {
 
     // (Seguridad) Busca solo si el ID pertenece al centro del usuario
     public Optional<Movadoj> findByIdAndMovCentro(Integer id, Integer movCentro) {
-        return movadojRepository.findById(id)
-                .filter(movadoj -> movadoj.getMovCentro().equals(movCentro));
+        return movadojRepository.findByMovOrdenAndMovCentro(id, movCentro);
     }
 
     public Movadoj save(Movadoj movadoj) {

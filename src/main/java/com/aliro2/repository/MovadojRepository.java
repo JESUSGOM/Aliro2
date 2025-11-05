@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
@@ -43,4 +44,9 @@ public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
      * (Sin Paginación) Busca TODAS las visitas activas POR CENTRO.
      */
     List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
+
+    /**
+     * (Seguridad) Busca una visita por ID y Centro
+     */
+    Optional<Movadoj> findByMovOrdenAndMovCentro(Integer movOrden, Integer movCentro);
 }

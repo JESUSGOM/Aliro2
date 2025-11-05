@@ -65,7 +65,6 @@ public class VisitaController {
         Integer centroUsuario = getCentroUsuario(authentication);
 
         // --- VALIDACIÓN DE SEGURIDAD ---
-        // Aseguramos que un usuario no pueda guardar una visita en otro centro
         if (!visita.getMovCentro().equals(centroUsuario)) {
             return "redirect:/panel?error=accesoDenegado";
         }
@@ -132,19 +131,36 @@ public class VisitaController {
         return "redirect:" + redirectUrl;
     }
 
+    /**
+     * MUESTRA EL INFORME DE TODAS LAS VISITAS (ACTIVAS, DE CUALQUIER FECHA, POR CENTRO)
+     * URL: /visitas/informes
+     */
     @GetMapping("/visitas/informes")
-    public String mostrarInformeVisitas(Model model, Authentication authentication) {
-        Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
+    public String mostrarInformeVisitas(Model model, Authentication authentication,
+                                        @RequestParam(name = "page", defaultValue = "0") int page,
+                                        @RequestParam(name = "keyword", required = false) String keyword) {
 
-        // 2. Buscamos todas las visitas (findAll) pero filtradas por el centro
-        // (Asumiendo que quieres el informe solo de tu centro)
-        model.addAttribute("visitas", movadojService.findAllByCentro(centroUsuario));
+        Integer centroUsuario = getCentroUsuario(authentication);
+        Pageable pageable = PageRequest.of(page, 10);
 
-        model.addAttribute("pageTitle", "Informe de Visitantes");
+        // Llamamos al método que busca TODAS las visitas activas (sin filtro de fecha)
+        Page<Movadoj> visitasPage = movadojService.findTodasVisitasActivasPorCentro(keyword, centroUsuario, pageable);
+
+        model.addAttribute("visitasPage", visitasPage);
+        model.addAttribute("keyword", keyword);
+
+        int totalPaginas = visitasPage.getTotalPages();
+        if (totalPaginas > 0) {
+            List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
+            model.addAttribute("numerosPagina", numerosPagina);
+        }
+
+        model.addAttribute("pageTitle", "Informe de Visitantes (Activos)");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";
     }
 
+    // MUESTRA EL FORMULARIO PARA EDITAR (FUNCIONALIDAD EXTRA)
     @GetMapping("/visitas/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication); // 1. Obtenemos el centro
