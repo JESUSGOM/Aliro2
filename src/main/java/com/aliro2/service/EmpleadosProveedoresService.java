@@ -25,9 +25,11 @@ public class EmpleadosProveedoresService {
      */
     public Page<EmpleadosProveedores> findByCentro(Integer empCentro, String keyword, Pageable pageable) {
         if (keyword != null && !keyword.trim().isEmpty()) {
+            // Llama al método de búsqueda complejo
             return empleadosProveedoresRepository.findByEmpCentroEqualsAndEmpNifContainingIgnoreCaseOrEmpNombreContainingIgnoreCaseOrEmpApellido1ContainingIgnoreCaseOrderByEmpApellido1Asc(
                     empCentro, keyword, keyword, keyword, pageable);
         } else {
+            // Llama al método simple de paginación por centro
             return empleadosProveedoresRepository.findByEmpCentroEqualsOrderByEmpApellido1Asc(empCentro, pageable);
         }
     }
@@ -39,9 +41,14 @@ public class EmpleadosProveedoresService {
         return empleadosProveedoresRepository.findByEmpIdAndEmpCentroEquals(empId, empCentro);
     }
 
+    /**
+     * Busca todos los empleados de un centro (sin paginar).
+     */
     public List<EmpleadosProveedores> findByCentro(Integer empCentro) {
         return empleadosProveedoresRepository.findByEmpCentroEquals(empCentro);
     }
+
+    // --- Métodos CRUD Estándar ---
 
     public EmpleadosProveedores save(EmpleadosProveedores empleado) {
         return empleadosProveedoresRepository.save(empleado);
@@ -53,5 +60,9 @@ public class EmpleadosProveedoresService {
 
     public Optional<EmpleadosProveedores> findById(Integer id) {
         return empleadosProveedoresRepository.findById(id);
+    }
+
+    public List<EmpleadosProveedores> findAll() {
+        return empleadosProveedoresRepository.findAll();
     }
 }

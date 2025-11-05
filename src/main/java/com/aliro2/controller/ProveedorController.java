@@ -106,8 +106,7 @@ public class ProveedorController {
             return "redirect:/proveedores/consultar?error=accesoDenegado";
         }
 
-        ProveedorId id = new ProveedorId(cif, centro);
-        Proveedor proveedor = proveedorService.findById(id)
+        Proveedor proveedor = proveedorService.findByIdAndCentro(cif, centro)
                 .orElseThrow(() -> new IllegalArgumentException("ID de proveedor inválido"));
 
         model.addAttribute("proveedor", proveedor);
@@ -143,6 +142,7 @@ public class ProveedorController {
                                     @PathVariable("centro") Integer centro, Authentication authentication) {
 
         Integer centroUsuario = getCentroUsuario(authentication);
+        // Seguridad: Validamos que el usuario es dueño de este registro
         if (!centro.equals(centroUsuario)) {
             return "redirect:/proveedores/consultar?error=accesoDenegado";
         }

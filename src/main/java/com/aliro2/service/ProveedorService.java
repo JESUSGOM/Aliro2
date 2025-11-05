@@ -22,25 +22,38 @@ public class ProveedorService {
     }
 
     /**
-     * MÉTODO ACTUALIZADO:
      * Busca proveedores por centro, con paginación y búsqueda opcional.
      */
     public Page<Proveedor> findByCentro(Integer prdCentro, String keyword, Pageable pageable) {
         if (keyword != null && !keyword.trim().isEmpty()) {
+            // Llama al método de búsqueda complejo
             return proveedorRepository.findById_PrdCentroAndPrdDenominacionContainingIgnoreCaseOrId_PrdCifContainingIgnoreCase(
                     prdCentro, keyword, keyword, pageable);
         } else {
+            // Llama al método de búsqueda simple por centro
             return proveedorRepository.findById_PrdCentro(prdCentro, pageable);
         }
     }
 
-    // Método para obtener una lista simple (usado en EmpleadoProveedor)
+    /**
+     * Busca todos los proveedores de un centro (sin paginar).
+     */
     public List<Proveedor> findByCentro(Integer prdCentro) {
         return proveedorRepository.findById_PrdCentro(prdCentro);
     }
 
+    /**
+     * Busca un proveedor por sus claves (ID compuesto).
+     */
     public Optional<Proveedor> findById(ProveedorId id) {
         return proveedorRepository.findById(id);
+    }
+
+    /**
+     * Busca un proveedor por sus claves separadas (para seguridad).
+     */
+    public Optional<Proveedor> findByIdAndCentro(String cif, Integer centro) {
+        return proveedorRepository.findById_PrdCifAndId_PrdCentro(cif, centro);
     }
 
     public Proveedor save(Proveedor proveedor) {

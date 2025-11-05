@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface EmpleadosProveedoresRepository extends JpaRepository<EmpleadosProveedores, Integer> {
 
     /**
-     * Busca empleados de un centro específico, paginado.
+     * Busca empleados de un centro específico, paginado y ordenado por apellido.
      */
     Page<EmpleadosProveedores> findByEmpCentroEqualsOrderByEmpApellido1Asc(Integer empCentro, Pageable pageable);
 
@@ -24,10 +24,12 @@ public interface EmpleadosProveedoresRepository extends JpaRepository<EmpleadosP
             Integer empCentro, String nifKeyword, String nombreKeyword, String apellidoKeyword, Pageable pageable);
 
     /**
-     * Busca un empleado por su ID y su Centro (para seguridad).
+     * Busca un empleado por su ID y su Centro (para seguridad en edición/eliminación).
      */
     Optional<EmpleadosProveedores> findByEmpIdAndEmpCentroEquals(Integer empId, Integer empCentro);
 
-    // Lista simple de empleados por centro
+    /**
+     * Busca todos los empleados de un centro (sin paginar).
+     */
     List<EmpleadosProveedores> findByEmpCentroEquals(Integer empCentro);
 }

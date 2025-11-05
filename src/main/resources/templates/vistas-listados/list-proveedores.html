@@ -4,15 +4,12 @@
 <div th:fragment="content">
 
     <style>
-        .list-container { max-width: 1200px; margin: 30px auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .list-container { max-width: 1200px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .list-container h2 { text-align: center; margin-bottom: 25px; }
         .table-actions a { margin-right: 5px; display: inline-block; }
-
-        /* Estilos de Paginación (Bootstrap) */
         .pagination { justify-content: center; margin-top: 20px; }
         .page-item .page-link { color: #28a745; }
         .page-item.active .page-link { background-color: #28a745; border-color: #28a745; color: white; }
-        .page-item.disabled .page-link { color: #6c757d; }
     </style>
 
     <div class="list-container">
@@ -64,12 +61,10 @@
                 <li class="page-item" th:classappend="${proveedoresPage.isFirst()} ? 'disabled' : ''">
                     <a class="page-link" th:href="@{/proveedores/consultar(page=${proveedoresPage.number - 1}, keyword=${keyword})}">Anterior</a>
                 </li>
-
                 <li class="page-item" th:each="numero : ${numerosPagina}"
                     th:classappend="${numero == proveedoresPage.number} ? 'active' : ''">
                     <a class="page-link" th:href="@{/proveedores/consultar(page=${numero}, keyword=${keyword})}" th:text="${numero + 1}"></a>
                 </li>
-
                 <li class="page-item" th:classappend="${proveedoresPage.isLast()} ? 'disabled' : ''">
                     <a class="page-link" th:href="@{/proveedores/consultar(page=${proveedoresPage.number + 1}, keyword=${keyword})}">Siguiente</a>
                 </li>

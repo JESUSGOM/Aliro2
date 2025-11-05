@@ -5,7 +5,7 @@ import com.aliro2.model.Proveedor;
 import com.aliro2.model.Usuario;
 import com.aliro2.repository.UsuarioRepository;
 import com.aliro2.service.EmpleadosProveedoresService;
-import com.aliro2.service.ProveedorService;
+import com.aliro2.service.ProveedorService; // <- Importante: se necesita el servicio de Proveedores
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,8 +45,8 @@ public class EmpleadoProveedorController {
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado o sin centro asignado"));
     }
 
-    // Método auxiliar para cargar la lista de proveedores del centro
-    private void cargarProveedores(Model model, Integer centroUsuario) {
+    // Método auxiliar para cargar la lista de proveedores del centro al modelo
+    private void cargarProveedoresDelCentro(Model model, Integer centroUsuario) {
         List<Proveedor> proveedores = proveedorService.findByCentro(centroUsuario);
         model.addAttribute("proveedores", proveedores);
     }
@@ -95,7 +95,7 @@ public class EmpleadoProveedorController {
         model.addAttribute("isEditMode", false);
 
         // Carga la lista de proveedores para el <select>
-        cargarProveedores(model, centroUsuario);
+        cargarProveedoresDelCentro(model, centroUsuario);
 
         model.addAttribute("view", "vistas-formularios/form-empleado-proveedor");
         return "layouts/layout";
@@ -115,10 +115,10 @@ public class EmpleadoProveedorController {
 
         model.addAttribute("empleado", empleado);
         model.addAttribute("pageTitle", "Editar Empleado de Proveedor");
-        model.addAttribute("isEditMode", true); // Para bloquear/identificar edición
+        model.addAttribute("isEditMode", true);
 
         // Carga la lista de proveedores para el <select>
-        cargarProveedores(model, centroUsuario);
+        cargarProveedoresDelCentro(model, centroUsuario);
 
         model.addAttribute("view", "vistas-formularios/form-empleado-proveedor");
         return "layouts/layout";
@@ -136,9 +136,6 @@ public class EmpleadoProveedorController {
         if (!empleado.getEmpCentro().equals(centroUsuario)) {
             return "redirect:/empleados-proveedor/consultar?error=accesoDenegado";
         }
-
-        // Lógica para formatear fechas si es necesario (asumiendo que el input de HTML es yyyy-MM-dd)
-        // Si usas <input type="date">, Spring lo convierte a LocalDate automáticamente.
 
         empleadoService.save(empleado);
         return "redirect:/empleados-proveedor/consultar"; // Vuelve a la lista

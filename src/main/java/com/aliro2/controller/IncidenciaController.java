@@ -1,8 +1,13 @@
 package com.aliro2.controller;
 
 import com.aliro2.model.Incidencia;
+import com.aliro2.model.Usuario;
+import com.aliro2.repository.UsuarioRepository;
 import com.aliro2.service.IncidenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,115 +15,141 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-/**
- * Controlador para gestionar la lógica de las Incidencias (CRUD).
- * Se activa cuando el usuario hace clic en los botones del panel.
- */
 @Controller
 public class IncidenciaController {
 
-    // Inyección de servicios por constructor (práctica recomendada)
     private final IncidenciaService incidenciaService;
+    private final UsuarioRepository usuarioRepository;
+
+    // Formateadores para el formato de tu BD (AAAAMMDD y HHMM)
+    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private final DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HHmm");
 
     @Autowired
-    public IncidenciaController(IncidenciaService incidenciaService) {
+    public IncidenciaController(IncidenciaService incidenciaService, UsuarioRepository usuarioRepository) {
         this.incidenciaService = incidenciaService;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    // Método auxiliar para obtener el centro del usuario logueado
+    private Integer getCentroUsuario(Authentication authentication) {
+        String dni = authentication.getName();
+        return usuarioRepository.findByUsuDni(dni)
+                .map(Usuario::getUsuCentro)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado o sin centro asignado"));
     }
 
     /**
-     * MUESTRA EL FORMULARIO DE NUEVA INCIDENCIA
-     * Se activa con el botón: "Entrada Incidencias"
-     * URL: /incidencias/entrada
-     */
-    @GetMapping("/incidencias/entrada")
-    public String mostrarFormularioNueva(Model model) {
-        // Prepara un objeto 'incidencia' vacío para enlazar al formulario
-        model.addAttribute("incidencia", new Incidencia());
-
-        // Establece el título de la página
-        model.addAttribute("pageTitle", "Registrar Nueva Incidencia");
-
-        // Le dice al layout principal qué fragmento de contenido debe cargar
-        model.addAttribute("view", "vistas-formularios/form-incidencia");
-
-        return "layouts/layout"; // Carga la plantilla base (layout.html)
-    }
-
-    /**
-     * MUESTRA LA LISTA DE INCIDENCIAS
-     * Se activa con los botones: "Consultar Incidencias" e "Informes Incidencias"
-     * URL: /incidencias/consultar y /incidencias/informes
+     * MUESTRA LA LISTA DE INCIDENCIAS (Paginada y con Búsqueda)
+     * Se activa con: "Consultar Incidencias" e "Informes Incidencias"
      */
     @GetMapping({"/incidencias/consultar", "/incidencias/informes"})
-    public String mostrarListaIncidencias(Model model) {
-        // Busca todas las incidencias en la base de datos
-        List<Incidencia> listaIncidencias = incidenciaService.findAll();
+    public String mostrarListaIncidencias(Model model, Authentication authentication,
+                                          @RequestParam(name = "page", defaultValue = "0") int page,
+                                          @RequestParam(name = "keyword", required = false) String keyword) {
 
-        model.addAttribute("incidencias", listaIncidencias);
+        Integer centroUsuario = getCentroUsuario(authentication);
+        Pageable pageable = PageRequest.of(page, 10); // 10 por página
+
+        Page<Incidencia> incidenciasPage = incidenciaService.findByCentro(centroUsuario, keyword, pageable);
+
+        model.addAttribute("incidenciasPage", incidenciasPage);
+        model.addAttribute("keyword", keyword);
+
+        int totalPaginas = incidenciasPage.getTotalPages();
+        if (totalPaginas > 0) {
+            List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
+            model.addAttribute("numerosPagina", numerosPagina);
+        }
+
         model.addAttribute("pageTitle", "Listado de Incidencias");
         model.addAttribute("view", "vistas-listados/list-incidencias");
         return "layouts/layout";
     }
 
     /**
-     * GUARDA LA INCIDENCIA (Tanto una NUEVA como una EDITADA)
-     * Se activa desde la acción POST del formulario form-incidencia.html
-     * URL: /incidencias/guardar
+     * MUESTRA EL FORMULARIO PARA CREAR UNA NUEVA INCIDENCIA
+     * Se activa con: "Entrada Incidencias"
      */
-    @PostMapping("/incidencias/guardar")
-    public String guardarIncidencia(@ModelAttribute("incidencia") Incidencia incidencia, Authentication authentication) {
+    @GetMapping("/incidencias/entrada")
+    public String mostrarFormularioNueva(Model model, Authentication authentication) {
+        Integer centroUsuario = getCentroUsuario(authentication);
 
-        // Si es una incidencia nueva (no tiene ID), seteamos la fecha, hora y usuario
-        if (incidencia.getIncId() == null) {
-            DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
-            DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HHmm");
+        Incidencia incidencia = new Incidencia();
+        incidencia.setIncCentro(centroUsuario); // Asigna el centro por defecto
 
-            incidencia.setIncFecha(LocalDate.now().format(dtfFecha));
-            incidencia.setIncHora(LocalTime.now().format(dtfHora));
-            incidencia.setIncUsuario(authentication.getName()); // Guarda el DNI del usuario logueado
-        }
-
-        incidenciaService.save(incidencia);
-
-        // Redirige a la lista para ver el cambio
-        return "redirect:/incidencias/consultar";
+        model.addAttribute("incidencia", incidencia);
+        model.addAttribute("pageTitle", "Registrar Nueva Incidencia");
+        model.addAttribute("view", "vistas-formularios/form-incidencia");
+        return "layouts/layout";
     }
 
     /**
      * MUESTRA EL FORMULARIO PARA EDITAR UNA INCIDENCIA
-     * Se activa desde el botón "Editar" en la lista de incidencias
-     * URL: /incidencias/editar/{id}
+     * Se activa desde el botón "Editar" en la lista
      */
     @GetMapping("/incidencias/editar/{id}")
-    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model) {
+    public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, Authentication authentication) {
+        Integer centroUsuario = getCentroUsuario(authentication);
 
-        // Busca la incidencia por su ID
-        Incidencia incidencia = incidenciaService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("ID de incidencia inválido:" + id));
+        // Busca la incidencia y se asegura de que pertenezca al centro del usuario
+        Incidencia incidencia = incidenciaService.findByIdAndCentro(id, centroUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("ID de incidencia inválido o acceso denegado"));
 
-        // Pasa la incidencia encontrada al formulario
         model.addAttribute("incidencia", incidencia);
         model.addAttribute("pageTitle", "Editar Incidencia");
-        model.addAttribute("view", "vistas-formularios/form-incidencia"); // Reutilizamos el mismo formulario
+        model.addAttribute("view", "vistas-formularios/form-incidencia");
         return "layouts/layout";
+    }
+
+    /**
+     * GUARDA LA INCIDENCIA (Nueva o Editada)
+     * Se activa desde la acción POST del formulario
+     */
+    @PostMapping("/incidencias/guardar")
+    public String guardarIncidencia(@ModelAttribute("incidencia") Incidencia incidencia, Authentication authentication) {
+
+        Integer centroUsuario = getCentroUsuario(authentication);
+        // Seguridad: Asegurarse de que el centro de la incidencia coincide con el del usuario
+        if (!incidencia.getIncCentro().equals(centroUsuario)) {
+            return "redirect:/incidencias/consultar?error=accesoDenegado";
+        }
+
+        // Si es una incidencia nueva (no tiene ID), seteamos fecha, hora y usuario
+        if (incidencia.getIncId() == null) {
+            incidencia.setIncFecha(LocalDate.now().format(dtfFecha));
+            incidencia.setIncHora(LocalTime.now().format(dtfHora));
+            incidencia.setIncUsuario(authentication.getName()); // DNI del usuario logueado
+        }
+
+        incidenciaService.save(incidencia);
+        return "redirect:/incidencias/consultar"; // Vuelve a la lista
     }
 
     /**
      * ELIMINA UNA INCIDENCIA
      * Se activa desde el botón "Eliminar" en la lista
-     * URL: /incidencias/eliminar/{id}
      */
     @GetMapping("/incidencias/eliminar/{id}")
-    public String eliminarIncidencia(@PathVariable("id") Integer id) {
-        incidenciaService.deleteById(id);
+    public String eliminarIncidencia(@PathVariable("id") Integer id, Authentication authentication) {
 
-        // Redirige de vuelta a la lista
+        Integer centroUsuario = getCentroUsuario(authentication);
+
+        // Verificamos que la incidencia exista y sea del centro del usuario antes de borrar
+        Incidencia incidencia = incidenciaService.findByIdAndCentro(id, centroUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("ID de incidencia inválido o acceso denegado"));
+
+        incidenciaService.deleteById(incidencia.getIncId());
+
         return "redirect:/incidencias/consultar";
     }
 }
