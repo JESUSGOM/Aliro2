@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
 
 /**
  * Entidad que representa la tabla 'Usuarios' de la base de datos Conlabac.
@@ -12,7 +11,7 @@ import lombok.Data;
  * La anotación @Data de Lombok genera automáticamente los getters, setters,
  * toString(), equals() y hashCode().
  */
-@Data
+
 @Entity
 @Table(name = "Usuarios")
 public class Usuario {

@@ -4,15 +4,72 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
 import java.time.LocalDate;
+import java.util.Objects;
 
-@Data
+
 @Entity
 @Table(name = "Proveedores")
 public class Proveedor {
 
-    @EmbeddedId
+	
+	
+    public Proveedor() {
+		super();
+	}
+
+	public Proveedor(ProveedorId id) {
+		super();
+		this.id = id;
+	}
+
+	public Proveedor(ProveedorId id, String prdDenominacion, String prdContacto, String prdTelefono, String prdEmail,
+			String prdDireccion, String prdProvincia, String prdMunicipio, String prdPais, String prdCodigopostal,
+			String prdWeb, String prdNotas, LocalDate prdFechaAlta, LocalDate prdFechaExpiracion) {
+		super();
+		this.id = id;
+		this.prdDenominacion = prdDenominacion;
+		this.prdContacto = prdContacto;
+		this.prdTelefono = prdTelefono;
+		this.prdEmail = prdEmail;
+		this.prdDireccion = prdDireccion;
+		this.prdProvincia = prdProvincia;
+		this.prdMunicipio = prdMunicipio;
+		this.prdPais = prdPais;
+		this.prdCodigopostal = prdCodigopostal;
+		this.prdWeb = prdWeb;
+		this.prdNotas = prdNotas;
+		this.prdFechaAlta = prdFechaAlta;
+		this.prdFechaExpiracion = prdFechaExpiracion;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, prdCodigopostal, prdContacto, prdDenominacion, prdDireccion, prdEmail, prdFechaAlta,
+				prdFechaExpiracion, prdMunicipio, prdNotas, prdPais, prdProvincia, prdTelefono, prdWeb);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Proveedor other = (Proveedor) obj;
+		return Objects.equals(id, other.id) && Objects.equals(prdCodigopostal, other.prdCodigopostal)
+				&& Objects.equals(prdContacto, other.prdContacto)
+				&& Objects.equals(prdDenominacion, other.prdDenominacion)
+				&& Objects.equals(prdDireccion, other.prdDireccion) && Objects.equals(prdEmail, other.prdEmail)
+				&& Objects.equals(prdFechaAlta, other.prdFechaAlta)
+				&& Objects.equals(prdFechaExpiracion, other.prdFechaExpiracion)
+				&& Objects.equals(prdMunicipio, other.prdMunicipio) && Objects.equals(prdNotas, other.prdNotas)
+				&& Objects.equals(prdPais, other.prdPais) && Objects.equals(prdProvincia, other.prdProvincia)
+				&& Objects.equals(prdTelefono, other.prdTelefono) && Objects.equals(prdWeb, other.prdWeb);
+	}
+
+	@EmbeddedId
     private ProveedorId id;
 
     @Column(name = "PrdDenominacion")

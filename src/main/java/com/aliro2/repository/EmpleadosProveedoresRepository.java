@@ -12,26 +12,17 @@ import java.util.Optional;
 @Repository
 public interface EmpleadosProveedoresRepository extends JpaRepository<EmpleadosProveedores, Integer> {
 
-    /**
-     * Busca empleados de un centro específico, paginado y ordenado por apellido.
-     */
+    // ... (métodos existentes) ...
     Page<EmpleadosProveedores> findByEmpCentroEqualsOrderByEmpApellido1Asc(Integer empCentro, Pageable pageable);
-
-    /**
-     * Busca empleados de un centro con un keyword (NIF, Nombre o Apellido1), paginado.
-     */
     Page<EmpleadosProveedores> findByEmpCentroEqualsAndEmpNifContainingIgnoreCaseOrEmpNombreContainingIgnoreCaseOrEmpApellido1ContainingIgnoreCaseOrderByEmpApellido1Asc(
             Integer empCentro, String nifKeyword, String nombreKeyword, String apellidoKeyword, Pageable pageable);
-
-    /**
-     * Busca un empleado por su ID y su Centro (para seguridad en edición/eliminación).
-     */
     Optional<EmpleadosProveedores> findByEmpIdAndEmpCentroEquals(Integer empId, Integer empCentro);
-
-    /**
-     * Busca todos los empleados de un centro (sin paginar).
-     */
     List<EmpleadosProveedores> findByEmpCentroEquals(Integer empCentro);
 
-    Optional<Object> findByNifAncCentro(String movEmpNif, Integer centroUsuario);
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Busca a un empleado por su NIF y su Centro.
+     * Es crucial para vincular el Movimiento con el Proveedor correcto.
+     */
+    Optional<EmpleadosProveedores> findByEmpNifAndEmpCentroEquals(String empNif, Integer empCentro);
 }

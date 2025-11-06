@@ -16,56 +16,56 @@
     <a th:href="@{/panel}" class="btn btn-secondary mb-3">Volver al Panel</a>
 
     <form th:action="@{/movimientos-empleados/consultar}" method="GET" class="mb-3">
-      <div class="input-group">
-        <input type="text" name="keyword" class="form-control" placeholder="Buscar por NIF, Nombre o Apellido..." th:value="${keyword}">
-        <button class="btn btn-outline-success" type="submit">Buscar</button>
-      </div>
-    </form>
-
-    <table class="table table-striped table-hover">
-      <thead class="table-dark">
-      <tr>
-        <th>NIF Empleado</th>
-        <th>CIF Proveedor</th>
-        <th>Fecha/Hora Entrada</th>
-        <th>Fecha/Hora Salida</th>
-        <th>Acción</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:if="${movimientosPage.empty}"><td colspan="5" class="text-center">No hay movimientos registrados.</td></tr>
-
-      <tr th:each="mov : ${movimientosPage.content}">
-        <td th:text="${mov.movEmpNif}"></td>
-        <td th:text="${mov.movPrdCif}"></td>
-        <td th:text="${#temporals.format(mov.movFechaHoraEntrada, 'dd/MM/yyyy HH:mm')}"></td>
-        <td th:text="${mov.movFechaHoraSalida != null} ? ${#temporals.format(mov.movFechaHoraSalida, 'dd/MM/yyyy HH:mm')} : '---'"></td>
-        <td class="table-actions">
-          <a sec:authorize="hasAnyRole('Z', 'Y')" th:if="${#httpServletRequest.requestURI.contains('eliminar')}"
-             th:href="@{/movimientos-empleados/eliminar/{id}(id=${mov.movId})}"
-             class="btn btn-sm btn-danger">
-            Eliminar
-          </a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-    <nav aria-label="Paginación" th:if="${movimientosPage.totalPages > 0}">
-      <ul class="pagination">
-        <li class="page-item" th:classappend="${movimientosPage.isFirst()} ? 'disabled' : ''">
-          <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${movimientosPage.number - 1}, keyword=${keyword})}">Anterior</a>
-        </li>
-        <li class="page-item" th:each="numero : ${numerosPagina}"
-            th:classappend="${numero == movimientosPage.number} ? 'active' : ''">
-          <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${numero}, keyword=${keyword})}" th:text="${numero + 1}"></a>
-        </li>
-        <li class="page-item" th:classappend="${movimientosPage.isLast()} ? 'disabled' : ''">
-          <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${movimientosPage.number + 1}, keyword=${keyword})}">Siguiente</a>
-        </li>
-      </ul>
-    </nav>
+      <div class.input-group">
+      <input type="text" name="keyword" class="form-control" placeholder="Buscar por NIF, Nombre o Apellido..." th:value="${keyword}">
+      <button class="btn btn-outline-success" type="submit">Buscar</button>
   </div>
+  </form>
+
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+    <tr>
+      <th>NIF Empleado</th>
+      <th>CIF Proveedor</th>
+      <th>Fecha/Hora Entrada</th>
+      <th>Fecha/Hora Salida</th>
+      <th>Acción</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${movimientosPage.empty}"><td colspan="5" class="text-center">No hay movimientos registrados.</td></tr>
+
+    <tr th:each="mov : ${movimientosPage.content}">
+      <td th:text="${mov.movEmpNif}"></td>
+      <td th:text="${mov.movPrdCif}"></td>
+      <td th:text="${#temporals.format(mov.movFechaHoraEntrada, 'dd/MM/yyyy HH:mm')}"></td>
+      <td th:text="${mov.movFechaHoraSalida != null} ? ${#temporals.format(mov.movFechaHoraSalida, 'dd/MM/yyyy HH:mm')} : '---'"></td>
+      <td class="table-actions">
+        <a sec:authorize="hasAnyRole('Z', 'Y')" th:if="${#httpServletRequest.requestURI.contains('eliminar')}"
+           th:href="@{/movimientos-empleados/eliminar/{id}(id=${mov.movId})}"
+           class="btn btn-sm btn-danger">
+          Eliminar
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <nav aria-label="Paginación" th:if="${movimientosPage.totalPages > 0}">
+    <ul class="pagination">
+      <li class="page-item" th:classappend="${movimientosPage.isFirst()} ? 'disabled' : ''">
+        <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${movimientosPage.number - 1}, keyword=${keyword})}">Anterior</a>
+      </li>
+      <li class.page-item" th:each="numero : ${numerosPagina}"
+      th:classappend="${numero == movimientosPage.number} ? 'active' : ''">
+      <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${numero}, keyword=${keyword})}" th:text="${numero + 1}"></a>
+      </li>
+      <li class.page-item" th:classappend="${movimientosPage.isLast()} ? 'disabled' : ''">
+      <a class="page-link" th:href="@{/movimientos-empleados/consultar(page=${movimientosPage.number + 1}, keyword=${keyword})}">Siguiente</a>
+      </li>
+    </ul>
+  </nav>
+</div>
 </div>
 </body>
 </html>

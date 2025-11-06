@@ -20,53 +20,42 @@ public class EmpleadosProveedoresService {
         this.empleadosProveedoresRepository = empleadosProveedoresRepository;
     }
 
-    /**
-     * Busca empleados por centro, con paginación y búsqueda opcional.
-     */
+    // ... (métodos existentes: findByCentro, findByIdAndCentro, etc.) ...
     public Page<EmpleadosProveedores> findByCentro(Integer empCentro, String keyword, Pageable pageable) {
+        // ... (código existente)
         if (keyword != null && !keyword.trim().isEmpty()) {
-            // Llama al método de búsqueda complejo
             return empleadosProveedoresRepository.findByEmpCentroEqualsAndEmpNifContainingIgnoreCaseOrEmpNombreContainingIgnoreCaseOrEmpApellido1ContainingIgnoreCaseOrderByEmpApellido1Asc(
                     empCentro, keyword, keyword, keyword, pageable);
         } else {
-            // Llama al método simple de paginación por centro
             return empleadosProveedoresRepository.findByEmpCentroEqualsOrderByEmpApellido1Asc(empCentro, pageable);
         }
     }
-
-    /**
-     * Busca un empleado por ID y Centro (para validación de seguridad).
-     */
     public Optional<EmpleadosProveedores> findByIdAndCentro(Integer empId, Integer empCentro) {
         return empleadosProveedoresRepository.findByEmpIdAndEmpCentroEquals(empId, empCentro);
     }
-
-    /**
-     * Busca todos los empleados de un centro (sin paginar).
-     */
     public List<EmpleadosProveedores> findByCentro(Integer empCentro) {
         return empleadosProveedoresRepository.findByEmpCentroEquals(empCentro);
     }
 
-    // --- Métodos CRUD Estándar ---
+    /**
+     * AÑADE ESTE MÉTODO:
+     * Busca a un empleado por su NIF y Centro.
+     */
+    public Optional<EmpleadosProveedores> findByNifAndCentro(String empNif, Integer empCentro) {
+        return empleadosProveedoresRepository.findByEmpNifAndEmpCentroEquals(empNif, empCentro);
+    }
 
+    // --- Métodos CRUD Estándar ---
     public EmpleadosProveedores save(EmpleadosProveedores empleado) {
         return empleadosProveedoresRepository.save(empleado);
     }
-
     public void deleteById(Integer id) {
         empleadosProveedoresRepository.deleteById(id);
     }
-
     public Optional<EmpleadosProveedores> findById(Integer id) {
         return empleadosProveedoresRepository.findById(id);
     }
-
     public List<EmpleadosProveedores> findAll() {
         return empleadosProveedoresRepository.findAll();
-    }
-
-    public Optional<Object> findByNifAndCentro(String movEmpNif, Integer centroUsuario) {
-        return empleadosProveedoresRepository.findByNifAncCentro(movEmpNif, centroUsuario);
     }
 }
