@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,23 @@ public interface MovadojRepository extends JpaRepository<Movadoj, Integer> {
     Page<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
     List<Movadoj> findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro);
     Optional<Movadoj> findByMovOrdenAndMovCentro(Integer movOrden, Integer movCentro);
+
+
+    // (Para /visitas/salida - Filtra por HOY, ACTIVAS y CENTRO)
+    Page<Movadoj> findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovFechaHoraEntradaDtBetweenOrderByMovOrdenDesc(
+            Integer movCentro, LocalDateTime fechaInicio, LocalDateTime fechaFin, Pageable pageable);
+
+    // (Para /visitas/salida - Con BÚSQUEDA)
+    Page<Movadoj> findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovFechaHoraEntradaDtBetweenAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(
+            Integer movCentro, LocalDateTime fechaInicio, LocalDateTime fechaFin, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+
+    // (Para /visitas/informes/general - Filtra TODAS las ACTIVAS por CENTRO)
+    Page<Movadoj> findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsOrderByMovOrdenDesc(Integer movCentro, Pageable pageable);
+
+    // (Para /visitas/informes/general - Con BÚSQUEDA)
+    Page<Movadoj> findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(
+            Integer movCentro, String nombreKeyword, String apellidoKeyword, Pageable pageable);
+
 
 
     // --- NUEVOS MÉTODOS PARA /visitas/informes/movimientos ---

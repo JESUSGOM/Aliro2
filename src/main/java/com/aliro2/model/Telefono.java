@@ -1,43 +1,64 @@
-package com.aliro2.model;
+package com.aliro2.model; // <-- Corregido
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Telefonos")
 public class Telefono {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TelId")
-    private Integer telId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "TelId")
+	private Integer telId;
 
-    @Column(name = "TelCentro")
-    private Integer telCentro;
+	@Column(name = "TelCentro", nullable = false)
+	private Integer telCentro;
 
-    @Column(name = "TelFecha")
-    private String telFecha; // VARCHAR(8)
+	@Column(name = "TelFecha", nullable = false, length = 8)
+	private String telFecha;
 
-    @Column(name = "TelHora")
-    private String telHora; // VARCHAR(6)
+	@Column(name = "TelHora", nullable = false, length = 6)
+	private String telHora;
 
-    @Column(name = "TelEmisor")
-    private String telEmisor;
+	@Column(name = "TelEmisor", nullable = false, length = 50)
+	private String telEmisor;
 
-    @Column(name = "TelDestinatario")
-    private String telDestinatario;
+	@Column(name = "TelDestinatario", nullable = false, length = 50)
+	private String telDestinatario;
 
-    @Column(name = "TelMensaje")
-    private String telMensaje;
+	@Column(name = "TelMensaje", nullable = false, length = 300)
+	private String telMensaje;
 
-    @Column(name = "TelComunicado")
-    private Integer telComunicado;
+	@Column(name = "TelComunicado")
+	private Integer telComunicado;
 
-    @Column(name = "TelFechaEntrega")
-    private String telFechaEntrega; // VARCHAR(8)
+	@Column(name = "TelFechaEntrega", length = 8)
+	private String telFechaEntrega;
 
-    @Column(name = "TelHoraEntrega")
-    private String telHoraEntrega; // VARCHAR(6)
+	@Column(name = "TelHoraEntrega", length = 6)
+	private String telHoraEntrega;
+
+	// --- NUEVOS CAMPOS (DATETIME) ---
+	@Column(name = "TelFechaHoraRegistro_dt")
+	private LocalDateTime telFechaHoraRegistroDt;
+
+	@Column(name = "TelFechaHoraEntrega_dt")
+	private LocalDateTime telFechaHoraEntregaDt;
+
+
+	// --- Constructores, Getters y Setters ---
+
+	public Telefono() {
+		// Constructor vacío necesario para JPA
+	}
+
+	// (Aquí van todos los Getters y Setters... los omito por brevedad)
 
 	public Integer getTelId() {
 		return telId;
@@ -118,6 +139,20 @@ public class Telefono {
 	public void setTelHoraEntrega(String telHoraEntrega) {
 		this.telHoraEntrega = telHoraEntrega;
 	}
-    
-    
+
+	public LocalDateTime getTelFechaHoraRegistroDt() {
+		return telFechaHoraRegistroDt;
+	}
+
+	public void setTelFechaHoraRegistroDt(LocalDateTime telFechaHoraRegistroDt) {
+		this.telFechaHoraRegistroDt = telFechaHoraRegistroDt;
+	}
+
+	public LocalDateTime getTelFechaHoraEntregaDt() {
+		return telFechaHoraEntregaDt;
+	}
+
+	public void setTelFechaHoraEntregaDt(LocalDateTime telFechaHoraEntregaDt) {
+		this.telFechaHoraEntregaDt = telFechaHoraEntregaDt;
+	}
 }

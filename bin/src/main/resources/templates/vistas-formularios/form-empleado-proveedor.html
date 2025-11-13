@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-container h2 { text-align: center; margin-bottom: 25px; }
+        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+    </style>
+
+    <div class="form-container">
+        <h2 th:text="${pageTitle}">Gestión de Empleado de Proveedor</h2>
+
+        <form th:action="@{/empleados-proveedor/guardar}" th:object="${empleado}" method="post">
+
+            <input type="hidden" th:field="*{empId}" />
+            <input type="hidden" th:field="*{empCentro}" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="proveedor" class="form-label">Proveedor (*)</label>
+                    <select class="form-select" id="proveedor" th:field="*{empPrdCif}" required>
+                        <option value="" disabled selected>-- Seleccione un Proveedor --</option>
+                        <option th:if="${proveedores.empty}" disabled>-- No hay proveedores creados --</option>
+                        <option th:each="prov : ${proveedores}"
+                                th:value="${prov.id.prdCif}"
+                                th:text="${prov.prdDenominacion}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="nif" class="form-label">NIF / DNI</label>
+                    <input type="text" class="form-control" id="nif" th:field="*{empNif}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="nombre" class="form-label">Nombre (*)</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{empNombre}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="apellido1" class="form-label">Primer Apellido (*)</label>
+                    <input type="text" class="form-control" id="apellido1" th:field="*{empApellido1}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="apellido2" class="form-label">Segundo Apellido</label>
+                    <input type="text" class="form-control" id="apellido2" th:field="*{empApellido2}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="cargo" class="form-label">Cargo (*)</label>
+                    <input type="text" class="form-control" id="cargo" th:field="*{empCargo}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" th:field="*{empTelefono}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{empEmail}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="fechaAcceso" class="form-label">Fecha Inicio Acceso (*)</label>
+                    <input type="date" class="form-control" id="fechaAcceso" th:field="*{empFechaAcceso}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="fechaFin" class="form-label">Fecha Fin Acceso (*)</label>
+                    <input type="date" class="form-control" id="fechaFin" th:field="*{empFechaFinAcceso}" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="notas" class="form-label">Notas</label>
+                <textarea class="form-control" id="notas" rows="3" th:field="*{empNotas}"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/empleados-proveedor/consultar}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+                <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Empleado</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

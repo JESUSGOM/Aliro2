@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <body>
 <div th:fragment="content">
 
@@ -20,11 +19,20 @@
             flex-direction: column;
             gap: 8px;
         }
+        /* (NUEVO) Añadimos un estilo para el título del grupo */
+        .button-group h5 {
+            color: white;
+            margin: 0 0 5px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            text-align: center;
+            font-size: 1.1rem;
+        }
         .button-group a.btn-menu {
             width: 100%;
             padding: 10px;
-            background-color: #28a745; /* Fondo verde */
-            color: white;             /* Texto blanco */
+            background-color: #28a745;
+            color: white;
             border: none;
             cursor: pointer;
             font-size: 16px;
@@ -40,68 +48,28 @@
     </style>
 
     <div class="d-flex flex-wrap" style="gap: 20px;">
-        <div class="dashboard-column">
+
+        <div class="dashboard-column" th:each="groupDto : ${menuGroups}">
+
             <div class="button-group">
-                <a th:href="@{/visitas/entrada}" class="btn-menu">Entrada Visitantes</a>
-                <a th:href="@{/visitas/salida}" class="btn-menu">Salida Visitantes</a>
-<!--                <a th:href="@{/visitas/informes}" class="btn-menu">Informes Visitantes</a>-->
+                <h5 th:text="${groupDto.group.mnNombre}">Nombre del Grupo</h5>
+
+                <a th:each="item : ${groupDto.items}"
+                   th:href="@{${item.mnUrl}}"
+                   class="btn-menu">
+                    <span th:text="${item.mnNombre}">Nombre del Item</span>
+                </a>
             </div>
-            <div class="button-group">
-                <a th:href="@{/incidencias/entrada}" class="btn-menu">Entrada Incidencias</a>
-                <a th:href="@{/incidencias/consultar}" class="btn-menu">Consultar Incidencias</a>
-                <a th:href="@{/incidencias/informes}" class="btn-menu">Informes Incidencias</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/proveedores/crear}" class="btn-menu">Crear Proveedores</a>
-                <a th:href="@{/proveedores/consultar}" class="btn-menu">Consultar Proveedores</a>
-                <a th:href="@{/proveedores/modificar}" class="btn-menu">Modificar Proveedor</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/turnos/comunicar}" class="btn-menu">Comunico Siguiente Turno</a>
+
+        </div>
+
+        <div class="col-12" th:if="${menuGroups.empty}">
+            <div class="alert alert-warning" role="alert">
+                No hay opciones de menú asignadas para tu perfil en este centro.
+                Por favor, contacta con un administrador.
             </div>
         </div>
 
-        <div class="dashboard-column">
-            <div class="button-group">
-                <a th:href="@{/llaves/entrega}" class="btn-menu">Entrega de Llaves</a>
-                <a th:href="@{/llaves/recogida}" class="btn-menu">Recogida de Llaves</a>
-                <a th:href="@{/llaves/informes}" class="btn-menu">Informes de Llaves</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/email/enviar}" class="btn-menu">Enviar Un Correo Electrónico</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/empleados-proveedor/crear}" class="btn-menu">Crear Empleado en Proveedor</a>
-                <a th:href="@{/empleados-proveedor/consultar}" class="btn-menu">Consultar Empleado en Proveedor</a>
-                <a th:href="@{/empleados-proveedor/modificar}" class="btn-menu">Modificar Empleado en Proveedor</a>
-                <a th:href="@{/empleados-proveedor/eliminar}" class="btn-menu">Eliminar Empleado de Proveedor</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/turnos/leer}" class="btn-menu">Leer Comunicación Turno Anterior</a>
-            </div>
-        </div>
-
-        <div class="dashboard-column">
-            <div class="button-group">
-                <a th:href="@{/llamadas/nueva}" class="btn-menu">Llamadas Telefónicas</a>
-                <a th:href="@{/llamadas/comunicar}" class="btn-menu">Comunicar llamadas</a>
-                <a th:href="@{/llamadas/informes}" class="btn-menu">Informes Llamadas</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/correspondencia/nueva}" class="btn-menu">Correspondencia</a>
-                <a th:href="@{/correspondencia/entrega}" class="btn-menu">Entrego Correspondencia</a>
-                <a th:href="@{/correspondencia/informes}" class="btn-menu">Informes Correspondencia</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/movimientos-empleados/entrada}" class="btn-menu">Entrada Empleados de Proveedores</a>
-                <a th:href="@{/movimientos-empleados/salida}" class="btn-menu">Salida Empleados de Proveedores</a>
-                <a th:href="@{/movimientos-empleados/consultar}" class="btn-menu">Consultar Movimientos Empleados de Proveedores</a>
-                <a th:href="@{/movimientos-empleados/eliminar}" class="btn-menu">Eliminar Movimientos Empleados de Proveedores</a>
-            </div>
-            <div class="button-group">
-                <a th:href="@{/turnos/informes}" class="btn-menu">Informes Entre Turnos</a>
-            </div>
-        </div>
     </div>
 </div>
 </body>

@@ -7,8 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate; // <- Importar LocalDate
-import java.time.format.DateTimeFormatter; // <- Importar DateTimeFormatter
+import java.time.LocalDate;
+import java.time.LocalDateTime; // <- IMPORTADO
+import java.time.LocalTime;   // <- IMPORTADO
 import java.util.List;
 import java.util.Optional;
 
@@ -16,25 +17,39 @@ import java.util.Optional;
 public class KeyMoveService {
 
     private final KeyMoveRepository keyMoveRepository;
-
-    // El formato de fecha de tu BD es AAAAMMDD
-    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
+    // private final DateTimeFormatter dtfFecha = ... // <- ELIMINADO
 
     @Autowired
     public KeyMoveService(KeyMoveRepository keyMoveRepository) {
         this.keyMoveRepository = keyMoveRepository;
     }
 
-    // ... (Métodos existentes: findByCentro, findById, save, etc.) ...
+    // (Para Informes - sin cambios)
     public Page<KeyMove> findByCentro(Integer keyCentro, Pageable pageable) {
         return keyMoveRepository.findByKeyCentroEqualsOrderByKeyOrdenDesc(keyCentro, pageable);
     }
+
+    // (Para Seguridad - sin cambios)
     public Optional<KeyMove> findByIdAndCentro(Integer id, Integer centro) {
         return keyMoveRepository.findByKeyOrdenAndKeyCentro(id, centro);
     }
-    public List<KeyMove> findLlavesPrestadasPorCentro(Integer keyCentro) {
-        return keyMoveRepository.findByKeyCentroEqualsAndKeyFechaRecepcionIsNull(keyCentro);
+
+    /**
+     * (Para /llaves/recogida - REFACTORIZADO)
+     * Busca llaves PRESTADAS (para la lista de recogida) FILTRANDO SÓLO POR HOY.
+     */
+    public Page<KeyMove> findLlavesPrestadasPorCentro(Integer keyCentro, Pageable pageable) {
+
+        // 1. Define el rango de "Hoy" (desde 00:00 hasta 23:59:59)
+        LocalDateTime inicioDelDia = LocalDate.now().atStartOfDay(); // Hoy a las 00:00
+        LocalDateTime finDelDia = LocalDate.now().atTime(LocalTime.MAX); // Hoy a las 23:59:59.999...
+
+        // 2. Llamamos al nuevo método del repositorio que filtra por rango de fechas
+        return keyMoveRepository.findByKeyCentroEqualsAndKeyFechaHoraRecepcionDtIsNullAndKeyFechaHoraEntregaDtBetweenOrderByKeyOrdenDesc(
+                keyCentro, inicioDelDia, finDelDia, pageable);
     }
+
+    // --- Métodos CRUD ---
     public KeyMove save(KeyMove keyMove) {
         return keyMoveRepository.save(keyMove);
     }
@@ -43,20 +58,5 @@ public class KeyMoveService {
     }
     public void deleteById(Integer id) {
         keyMoveRepository.deleteById(id);
-    }
-
-
-    /**
-     * MÉTODO CORREGIDO:
-     * Busca llaves PRESTADAS (para la lista de recogida)
-     * PERO AHORA FILTRA SÓLO POR LAS ENTREGADAS HOY.
-     */
-    public Page<KeyMove> findLlavesPrestadasPorCentro(Integer keyCentro, Pageable pageable) {
-
-        // 1. Obtenemos la fecha de hoy en formato yyyyMMdd
-        String fechaHoy = LocalDate.now().format(dtfFecha);
-
-        // 2. Llamamos al nuevo método del repositorio que filtra por fecha
-        return keyMoveRepository.findByKeyCentroEqualsAndKeyFechaRecepcionIsNullAndKeyFechaEntregaEqualsOrderByKeyOrdenDesc(keyCentro, fechaHoy, pageable);
     }
 }

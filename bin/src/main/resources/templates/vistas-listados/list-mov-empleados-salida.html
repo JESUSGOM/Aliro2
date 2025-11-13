@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <style>
+        .list-container { max-width: 1200px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .list-container h2 { text-align: center; margin-bottom: 25px; }
+        .btn-accion-salida {
+            width: 100%; padding: 10px; background-color: #28a745; color: white; border: none;
+            cursor: pointer; font-size: 14px; font-weight: bold; border-radius: 4px;
+        }
+        .btn-accion-salida:hover { background-color: #218838; }
+        .pagination { justify-content: center; margin-top: 20px; }
+        .page-item .page-link { color: #28a745; }
+        .page-item.active .page-link { background-color: #28a745; border-color: #28a745; color: white; }
+    </style>
+
+    <div class="list-container">
+        <h2 th:text="${pageTitle}">Registrar Salida de Empleado</h2>
+        <a th:href="@{/panel}" class="btn btn-secondary mb-3">Volver al Panel</a>
+
+        <form th:action="@{/movimientos-empleados/salida}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="keyword" class="form-control" placeholder="Buscar por NIF, Nombre o Apellido..." th:value="${keyword}">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </div>
+        </form>
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>NIF Empleado</th>
+                <th>CIF Proveedor</th>
+                <th>Fecha/Hora Entrada</th>
+                <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${movimientosPage.empty}"><td colspan="4" class="text-center">No hay empleados activos en el centro.</td></tr>
+
+            <tr th:each="mov : ${movimientosPage.content}">
+                <td th:text="${mov.movEmpNif}"></td>
+                <td th:text="${mov.movPrdCif}"></td>
+                <td th:text="${#temporals.format(mov.movFechaHoraEntrada, 'dd/MM/yyyy HH:mm')}"></td>
+                <td>
+                    <form th:action="@{/movimientos-empleados/registrar-salida/{id}(id=${mov.movId}, page=${movimientosPage.number}, keyword=${keyword})}" method="post">
+                        <button type"submit" class="btn-accion-salida">Registrar Salida</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="Paginación" th:if="${movimientosPage.totalPages > 0}">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${movimientosPage.isFirst()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/movimientos-empleados/salida(page=${movimientosPage.number - 1}, keyword=${keyword})}">Anterior</a>
+                </li>
+                <li class="page-item" th:each="numero : ${numerosPagina}"
+                    th:classappend="${numero == movimientosPage.number} ? 'active' : ''">
+                    <a class="page-link" th:href="@{/movimientos-empleados/salida(page=${numero}, keyword=${keyword})}" th:text="${numero + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${movimientosPage.isLast()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/movimientos-empleados/salida(page=${movimientosPage.number + 1}, keyword=${keyword})}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

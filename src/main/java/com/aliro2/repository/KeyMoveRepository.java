@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +15,11 @@ public interface KeyMoveRepository extends JpaRepository<KeyMove, Integer> {
 
     // --- MÉTODOS REQUERIDOS PARA "LLAVES" ---
 
-    /**
-     * 1. (Para Informes) Busca TODOS los movimientos de un CENTRO, paginado.
-     */
+    // (Para Informes) Busca TODOS los movimientos de un CENTRO, paginado.
     Page<KeyMove> findByKeyCentroEqualsOrderByKeyOrdenDesc(Integer keyCentro, Pageable pageable);
+
+    // (Para Lógica de Entrega) Busca llaves PRESTADAS (sin fecha recepción) de un CENTRO.
+    List<KeyMove> findByKeyCentroEqualsAndKeyFechaHoraRecepcionDtIsNull(Integer keyCentro);
 
     /**
      * 2. (Para Recogida) Busca llaves PRESTADAS (sin fecha recepción) de un CENTRO, paginado.
@@ -30,10 +32,15 @@ public interface KeyMoveRepository extends JpaRepository<KeyMove, Integer> {
      */
     List<KeyMove> findByKeyCentroEqualsAndKeyFechaRecepcionIsNull(Integer keyCentro);
 
-    /**
-     * 4. (Para Seguridad) Busca un movimiento por su ID y su Centro.
-     */
+    // (Para Seguridad) Busca un movimiento por su ID y su Centro.
     Optional<KeyMove> findByKeyOrdenAndKeyCentro(Integer keyOrden, Integer keyCentro);
+
+    // (Para Recogida) Busca llaves PRESTADAS (sin recepción) de un CENTRO, entregadas HOY.
+    Page<KeyMove> findByKeyCentroEqualsAndKeyFechaHoraRecepcionDtIsNullAndKeyFechaHoraEntregaDtBetweenOrderByKeyOrdenDesc(
+            Integer keyCentro, LocalDateTime fechaInicio, LocalDateTime fechaFin, Pageable pageable);
+
+    // (Sobrecarga para cuando no filtra por fecha - si decides quitar el filtro "hoy")
+    Page<KeyMove> findByKeyCentroEqualsAndKeyFechaHoraRecepcionDtIsNullOrderByKeyOrdenDesc(Integer keyCentro, Pageable pageable);
 
     // --- MÉTODOS REQUERIDOS PARA /llaves/recogida ---
 

@@ -22,14 +22,12 @@
             gap: 15px;
             margin-top: 20px;
         }
-
-        /* Estilos para el botón Grabar (verde) y Cancelar (gris) */
         .btn-grabar {
             background-color: #28a745;
             color: white;
             font-weight: bold;
             border: none;
-            font-size: 16px; /* Coincide con el estilo de login */
+            font-size: 16px;
         }
         .btn-grabar:hover {
             background-color: #218838;
@@ -55,6 +53,10 @@
 
             <input type="hidden" th:field="*{movOrden}" />
             <input type="hidden" th:field="*{movCentro}" />
+
+            <input type="hidden" th:field="*{movFechaHoraEntradaDt}" />
+            <input type="hidden" th:field="*{movFechaHoraSalidaDt}" />
+
 
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -94,19 +96,6 @@
                                 th:value="${pl.pltPlanta}"
                                 th:text="${pl.pltPlanta}"></option>
                     </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="fecha" class="form-label">Fecha</label>
-                    <input type="text" class="form-control" id="fecha"
-                           th:placeholder="${#temporals.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}" disabled>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="hora" class="form-label">Hora</label>
-                    <input type="text" class="form-control" id="hora"
-                           th:placeholder="${#temporals.format(T(java.time.LocalTime).now(), 'HH:mm')}" disabled>
                 </div>
             </div>
 

@@ -5,23 +5,21 @@
   <style>
     .list-container { max-width: 1200px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .list-container h2 { text-align: center; margin-bottom: 25px; }
-
     .btn-accion-salida {
       width: 100%;
       padding: 10px;
-      background-color: #28a745; /* Fondo verde */
-      color: white;             /* Texto blanco */
+      background-color: #28a745;
+      color: white;
       border: none;
       cursor: pointer;
-      font-size: 14px;          /* Ajustado para la tabla */
+      font-size: 14px;
       font-weight: bold;
       border-radius: 4px;
       transition: background-color 0.2s;
     }
     .btn-accion-salida:hover {
-      background-color: #218838; /* Verde oscuro (hover) */
+      background-color: #218838;
     }
-
     .pagination { justify-content: center; margin-top: 20px; }
     .page-item .page-link { color: #28a745; }
     .page-item.active .page-link { background-color: #28a745; border-color: #28a745; color: white; }
@@ -44,22 +42,20 @@
         <th>Nombre</th>
         <th>Apellidos</th>
         <th>Procedencia</th>
-        <th>Fecha Entrada</th>
-        <th>Hora Entrada</th>
+        <th>Fecha/Hora Entrada</th>
         <th>Acción</th>
       </tr>
       </thead>
       <tbody>
       <tr th:if="${visitasPage.empty}">
-        <td colspan="6" class="text-center">No se encontraron visitas activas de hoy (o que coincidan con la búsqueda).</td>
+        <td colspan="5" class="text-center">No se encontraron visitas activas de hoy (o que coincidan con la búsqueda).</td>
       </tr>
 
       <tr th:each="v : ${visitasPage.content}">
         <td th:text="${v.movNombre}"></td>
         <td th:text="|${v.movApellidoUno} ${v.movApellidoDos ?: ''}|"></td>
         <td th:text="${v.movProcedencia}"></td>
-        <td th:text="${v.movFechaEntrada}"></td>
-        <td th:text="${v.movHoraEntrada}"></td>
+        <td th:text="${#temporals.format(v.movFechaHoraEntradaDt, 'dd/MM/yyyy HH:mm')}"></td>
         <td>
           <form th:action="@{/visitas/registrar-salida/{id}(id=${v.movOrden}, page=${visitasPage.number}, keyword=${keyword})}" method="post">
             <button type="submit" class="btn-accion-salida">Registrar Salida</button>

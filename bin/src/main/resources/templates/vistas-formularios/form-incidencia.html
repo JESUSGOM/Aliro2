@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto; /* Centrado (el padding ya viene del layout) */
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+    </style>
+
+    <div class="form-container">
+        <h2 th:text="${pageTitle}">Gestión de Incidencia</h2>
+
+        <form th:action="@{/incidencias/guardar}" th:object="${incidencia}" method="post">
+
+            <input type="hidden" th:field="*{incId}" />
+            <input type="hidden" th:field="*{incUsuario}" />
+            <input type="hidden" th:field="*{incFecha}" />
+            <input type="hidden" th:field="*{incHora}" />
+            <input type="hidden" th:field="*{incCentro}" />
+
+            <div class="mb-3">
+                <label for="texto" class="form-label">Descripción de la Incidencia (*)</label>
+                <textarea class="form-control" id="texto" rows="5" th:field="*{incTexto}" required></textarea>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6 mb-3">
+                    <label for="comunicadoA" class="form-label">Comunicado A (*)</label>
+                    <input type="text" class="form-control" id="comunicadoA" th:field="*{incComunicadoA}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="modo" class="form-label">Modo de Comunicación (*)</label>
+                    <select class="form-select" id="modo" th:field="*{incModoComunica}" required>
+                        <option value="" disabled selected>-- Seleccione --</option>
+                        <option value="Email">Email</option>
+                        <option value="Teléfono">Teléfono</option>
+                        <option value="En Persona">En Persona</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email de Contacto (si aplica)</label>
+                <input type="email" class="form-control" id="email" th:field="*{incEmailComunica}">
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/incidencias/consultar}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+                <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Incidencia</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

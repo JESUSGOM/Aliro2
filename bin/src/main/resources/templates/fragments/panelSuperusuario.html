@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+    <h1>Panel de Superusuario</h1>
+    <p>Acceso completo a todas las funcionalidades del sistema.</p>
+
+    <div class="row">
+        <div class="col">
+            <div class="card card-body">
+                <h5>Gestión de Visitantes</h5>
+                <form th:action="@{/visitantes/entrada}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Entrada Visitantes</button>
+                </form>
+                <form th:action="@{/visitantes/salida}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Salida Visitantes</button>
+                </form>
+                <form th:action="@{/visitantes/informes}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Informes Visitantes</button>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-body">
+                <h5>Gestión de Llaves</h5>
+                <form th:action="@{/llaves/entrega}" method="POST">
+                    <button type="submit" class="btn btn-success btn-block">Entrega de Llaves</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -24,18 +24,19 @@
       <tr>
         <th>Cód. Llave</th>
         <th>Retirada por</th>
-        <th>Fecha Entrega</th>
-        <th>Hora Entrega</th>
+        <th>Fecha/Hora Entrega</th>
         <th>Acción</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:if="${llavesPage.empty}"><td colspan="5" class="text-center">No hay llaves pendientes de recogida.</td></tr>
+      <tr th:if="${llavesPage.empty}"><td colspan="4" class="text-center">No hay llaves pendientes de recogida entregadas hoy.</td></tr>
+
       <tr th:each="km : ${llavesPage.content}">
         <td th:text="${km.keyLlvOrden}"></td>
         <td th:text="|${km.keyNombre} ${km.keyApellidoUno}|"></td>
-        <td th:text="${km.keyFechaEntrega}"></td>
-        <td th:text="${km.keyHoraEntrega}"></td>
+
+        <td th:text="${#temporals.format(km.keyFechaHoraEntregaDt, 'dd/MM/yyyy HH:mm')}"></td>
+
         <td>
           <form th:action="@{/llaves/registrar-recogida/{id}(id=${km.keyOrden}, page=${llavesPage.number})}" method="post">
             <button type="submit" class="btn-accion-verde">Registrar Recogida</button>

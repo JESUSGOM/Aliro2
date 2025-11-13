@@ -29,7 +29,7 @@
         <table class="table table-striped table-hover">
             <thead class="table-dark">
             <tr>
-                <th>Fecha/Hora</th>
+                <th>Fecha/Hora Reg.</th>
                 <th>Emisor</th>
                 <th>Destinatario</th>
                 <th>Mensaje</th>
@@ -37,10 +37,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${llamadasPage.empty}"><td colspan="5" class.text-center">No hay llamadas pendientes de comunicar.</td></tr>
+            <tr th:if="${llamadasPage.empty}"><td colspan="5" class="text-center">No hay llamadas pendientes de comunicar.</td></tr>
 
             <tr th:each="tel : ${llamadasPage.content}">
-                <td th:text="|${tel.telFecha} ${tel.telHora}|"></td>
+                <td th:text="${#temporals.format(tel.telFechaHoraRegistroDt, 'dd/MM/yyyy HH:mm')}"></td>
                 <td th:text="${tel.telEmisor}"></td>
                 <td th:text="${tel.telDestinatario}"></td>
                 <td th:text="${#strings.abbreviate(tel.telMensaje, 60)}"></td>

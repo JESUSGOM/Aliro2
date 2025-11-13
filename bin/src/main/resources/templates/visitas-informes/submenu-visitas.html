@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .submenu-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .submenu-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        /* Estilo para los botones de informe (verde) */
+        .btn-informe {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #28a745; /* Fondo verde */
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .btn-informe:hover {
+            background-color: #218838;
+            color: white;
+        }
+        .btn-volver {
+            background-color: #6c757d;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-volver:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+    </style>
+
+    <div class="submenu-container">
+        <h2 th:text="${pageTitle}">Informes de Visitantes</h2>
+
+        <a th:href="@{/visitas/informes/general}" class="btn-informe">General de Visitantes</a>
+
+        <a th:href="@{/visitas/informes/movimientos}" class="btn-informe">General con Movimientos</a>
+
+        <hr>
+        <a th:href="@{/panel}" class="btn btn-volver">Volver al Panel</a>
+    </div>
+</div>
+</body>
+</html>

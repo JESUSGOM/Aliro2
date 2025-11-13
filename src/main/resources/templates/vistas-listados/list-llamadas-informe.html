@@ -35,7 +35,7 @@
             <tbody>
             <tr th:if="${llamadasPage.empty}"><td colspan="6" class="text-center">No hay llamadas registradas.</td></tr>
             <tr th:each="tel : ${llamadasPage.content}">
-                <td th:text="|${tel.telFecha} ${tel.telHora}|"></td>
+                <td th:text="${#temporals.format(tel.telFechaHoraRegistroDt, 'dd/MM/yyyy HH:mm')}"></td>
                 <td th:text="${tel.telEmisor}"></td>
                 <td th:text="${tel.telDestinatario}"></td>
                 <td th:text="${#strings.abbreviate(tel.telMensaje, 50)}"></td>
@@ -43,7 +43,7 @@
                     <span th:if="${tel.telComunicado == 1}" class="badge bg-success">Comunicado</span>
                     <span th:unless="${tel.telComunicado == 1}" class="badge bg-warning">Pendiente</span>
                 </td>
-                <td th:text="${tel.telFechaEntrega != null} ? |${tel.telFechaEntrega} ${tel.telHoraEntrega}| : '---'"></td>
+                <td th:text="${tel.telFechaHoraEntregaDt != null} ? ${#temporals.format(tel.telFechaHoraEntregaDt, 'dd/MM/yyyy HH:mm')} : '---'"></td>
             </tr>
             </tbody>
         </table>

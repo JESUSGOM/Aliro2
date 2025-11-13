@@ -19,21 +19,20 @@
       <tr>
         <th>Cód. Llave</th>
         <th>Retirada por</th>
-        <th>Fecha Entrega</th>
-        <th>Hora Entrega</th>
-        <th>Fecha Recepción</th>
-        <th>Hora Recepción</th>
+        <th>Fecha/Hora Entrega</th>
+        <th>Fecha/Hora Recepción</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:if="${llavesPage.empty}"><td colspan="6" class="text-center">No hay movimientos de llaves registrados.</td></tr>
+      <tr th:if="${llavesPage.empty}"><td colspan="4" class="text-center">No hay movimientos de llaves registrados.</td></tr>
+
       <tr th:each="km : ${llavesPage.content}">
         <td th:text="${km.keyLlvOrden}"></td>
         <td th:text="|${km.keyNombre} ${km.keyApellidoUno}|"></td>
-        <td th:text="${km.keyFechaEntrega}"></td>
-        <td th:text="${km.keyHoraEntrega}"></td>
-        <td th:text="${km.keyFechaRecepcion}"></td>
-        <td th:text="${km.keyHoraRecepcion}"></td>
+
+        <td th:text="${#temporals.format(km.keyFechaHoraEntregaDt, 'dd/MM/yyyy HH:mm')}"></td>
+
+        <td th:text="${km.keyFechaHoraRecepcionDt != null} ? ${#temporals.format(km.keyFechaHoraRecepcionDt, 'dd/MM/yyyy HH:mm')} : '---'"></td>
       </tr>
       </tbody>
     </table>

@@ -2,6 +2,7 @@ package com.aliro2.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -45,6 +46,12 @@ public class Movadoj {
 
     @Column(name = "MovHoraSalida")
     private String movHoraSalida; // VARCHAR(6)
+
+    @Column(name = "MovFechaHoraEntrada_dt")
+    private LocalDateTime movFechaHoraEntradaDt;
+
+    @Column(name = "MovFechaHoraSalida_dt")
+    private LocalDateTime movFechaHoraSalidaDt;
 
     @Column(name = "MovVehiculo")
     private String movVehiculo;
@@ -162,5 +169,21 @@ public class Movadoj {
 
     public void setMovMotivo(String movMotivo) {
         this.movMotivo = movMotivo;
+    }
+
+    public LocalDateTime getMovFechaHoraEntradaDt() {
+        return movFechaHoraEntradaDt;
+    }
+
+    public void setMovFechaHoraEntradaDt(LocalDateTime movFechaHoraEntradaDt) {
+        this.movFechaHoraEntradaDt = movFechaHoraEntradaDt;
+    }
+
+    public LocalDateTime getMovFechaHoraSalidaDt() {
+        return movFechaHoraSalidaDt;
+    }
+
+    public void setMovFechaHoraSalidaDt(LocalDateTime movFechaHoraSalidaDt) {
+        this.movFechaHoraSalidaDt = movFechaHoraSalidaDt;
     }
 }

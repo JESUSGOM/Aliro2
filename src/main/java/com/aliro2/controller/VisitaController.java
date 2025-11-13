@@ -15,15 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime; // <- IMPORTADO (ya no se usa LocalDate ni LocalTime)
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,8 +30,9 @@ public class VisitaController {
     private final PlantaService plantaService;
     private final AlquilerService alquilerService;
 
-    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private final DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HHmm");
+    // --- FORMATEADORES ELIMINADOS ---
+    // private final DateTimeFormatter dtfFecha = ...
+    // private final DateTimeFormatter dtfHora = ...
 
     @Autowired
     public VisitaController(MovadojService movadojService, UsuarioRepository usuarioRepository, PlantaService plantaService, AlquilerService alquilerService) {
@@ -47,7 +42,7 @@ public class VisitaController {
         this.alquilerService = alquilerService;
     }
 
-    // Método auxiliar para obtener el centro del usuario logueado
+    // Método auxiliar (sin cambios)
     private Integer getCentroUsuario(Authentication authentication) {
         String dni = authentication.getName();
         return usuarioRepository.findByUsuDni(dni)
@@ -56,8 +51,8 @@ public class VisitaController {
     }
 
     // --- MÉTODOS DE VISITAS (Entrada, Salida, Guardar, Editar) ---
-    // (Estos 5 métodos que ya tenías se quedan exactamente igual)
 
+    // (Sin cambios)
     @GetMapping("/visitas/entrada")
     public String mostrarFormularioEntrada(Model model, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
@@ -73,20 +68,27 @@ public class VisitaController {
         return "layouts/layout";
     }
 
+    // (¡ACTUALIZADO!)
     @PostMapping("/visitas/guardar")
     public String guardarVisita(@ModelAttribute("visita") Movadoj visita, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
         if (!visita.getMovCentro().equals(centroUsuario)) {
             return "redirect:/panel?error=accesoDenegado";
         }
+
+        // --- LÓGICA DE FECHA ACTUALIZADA ---
+        // Comprueba el ID (MovOrden) para saber si es nuevo
         if (visita.getMovOrden() == null) {
-            visita.setMovFechaEntrada(LocalDate.now().format(dtfFecha));
-            visita.setMovHoraEntrada(LocalTime.now().format(dtfHora));
+            // Si es una visita nueva, establece la fecha/hora de entrada
+            visita.setMovFechaHoraEntradaDt(LocalDateTime.now());
         }
+        // Si es una edición (getMovOrden() no es null), la fecha de entrada no se toca.
+
         movadojService.save(visita);
         return "redirect:/panel";
     }
 
+    // (Sin cambios en la lógica, pero ahora depende del Service refactorizado)
     @GetMapping("/visitas/salida")
     public String mostrarFormularioSalida(Model model,
                                           @RequestParam(name = "page", defaultValue = "0") int page,
@@ -94,6 +96,7 @@ public class VisitaController {
                                           Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 7);
+        // El servicio (refactorizado) se encarga de buscar solo las de HOY
         Page<Movadoj> visitasPage = movadojService.findVisitasActivas(keyword, centroUsuario, pageable);
         model.addAttribute("visitasPage", visitasPage);
         model.addAttribute("keyword", keyword);
@@ -107,6 +110,7 @@ public class VisitaController {
         return "layouts/layout";
     }
 
+    // (¡ACTUALIZADO!)
     @PostMapping("/visitas/registrar-salida/{id}")
     public String registrarSalida(@PathVariable("id") Integer id,
                                   @RequestParam(name = "page", defaultValue = "0") int page,
@@ -115,9 +119,12 @@ public class VisitaController {
         Integer centroUsuario = getCentroUsuario(authentication);
         Movadoj visita = movadojService.findByIdAndMovCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de visita inválido o acceso denegado:" + id));
-        visita.setMovFechaSalida(LocalDate.now().format(dtfFecha));
-        visita.setMovHoraSalida(LocalTime.now().format(dtfHora));
+
+        // --- LÓGICA DE FECHA ACTUALIZADA ---
+        visita.setMovFechaHoraSalidaDt(LocalDateTime.now());
+
         movadojService.save(visita);
+
         String redirectUrl = "/visitas/salida?page=" + page;
         if (keyword != null && !keyword.isEmpty()) {
             redirectUrl += "&keyword=" + keyword;
@@ -125,6 +132,7 @@ public class VisitaController {
         return "redirect:" + redirectUrl;
     }
 
+    // (Sin cambios)
     @GetMapping("/visitas/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable("id") Integer id, Model model, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
@@ -140,78 +148,50 @@ public class VisitaController {
         return "layouts/layout";
     }
 
-    // --- MÉTODOS DE INFORMES (AQUÍ ESTÁ LA CORRECCIÓN) ---
+    // --- MÉTODOS DE INFORMES (Sin cambios en el controlador) ---
 
-    /**
-     * 1. MUESTRA EL SUBMENÚ DE INFORMES
-     * (Botón "Informes Visitantes")
-     * URL: /visitas/informes
-     */
     @GetMapping("/visitas/informes")
     public String mostrarSubmenuInformes(Model model) {
         model.addAttribute("pageTitle", "Informes de Visitantes");
-        // Apuntamos a un NUEVO fragmento HTML
         model.addAttribute("view", "vistas-informes/submenu-visitas");
-        return "layouts/layout"; // Devolvemos el layout principal
+        return "layouts/layout";
     }
 
-    /**
-     * 2. MUESTRA EL INFORME "GENERAL DE VISITANTES" (SOLO ACTIVOS)
-     * Se activa desde el nuevo submenú
-     * URL: /visitas/informes/general
-     */
     @GetMapping("/visitas/informes/general")
     public String mostrarInformeGeneral(Model model, Authentication authentication,
                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                         @RequestParam(name = "keyword", required = false) String keyword) {
-
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 7);
-
-        // Llama al método que busca TODAS las visitas ACTIVAS (sin filtro de fecha)
         Page<Movadoj> visitasPage = movadojService.findTodasVisitasActivasPorCentro(keyword, centroUsuario, pageable);
-
         model.addAttribute("visitasPage", visitasPage);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("baseURL", "/visitas/informes/general"); // Para la paginación
-
+        model.addAttribute("baseURL", "/visitas/informes/general");
         int totalPaginas = visitasPage.getTotalPages();
         if (totalPaginas > 0) {
             List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
             model.addAttribute("numerosPagina", numerosPagina);
         }
-
         model.addAttribute("pageTitle", "Informe General de Visitantes (Activos)");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";
     }
 
-    /**
-     * 3. MUESTRA EL INFORME "GENERAL CON MOVIMIENTOS" (TODO EL HISTÓRICO)
-     * Se activa desde el nuevo submenú
-     * URL: /visitas/informes/movimientos
-     */
     @GetMapping("/visitas/informes/movimientos")
     public String mostrarInformeConMovimientos(Model model, Authentication authentication,
                                                @RequestParam(name = "page", defaultValue = "0") int page,
                                                @RequestParam(name = "keyword", required = false) String keyword) {
-
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 7);
-
-        // Llama al NUEVO método de servicio que busca TODO (incluyendo las visitas cerradas)
         Page<Movadoj> visitasPage = movadojService.findAllByCentro(keyword, centroUsuario, pageable);
-
         model.addAttribute("visitasPage", visitasPage);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("baseURL", "/visitas/informes/movimientos"); // Para la paginación
-
+        model.addAttribute("baseURL", "/visitas/informes/movimientos");
         int totalPaginas = visitasPage.getTotalPages();
         if (totalPaginas > 0) {
             List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
             model.addAttribute("numerosPagina", numerosPagina);
         }
-
         model.addAttribute("pageTitle", "Informe Histórico de Movimientos");
         model.addAttribute("view", "vistas-listados/list-visitas-informe");
         return "layouts/layout";

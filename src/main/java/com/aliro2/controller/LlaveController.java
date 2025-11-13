@@ -13,15 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime; // <- IMPORTADO
+// import java.time.LocalDate;     // <- ELIMINADO
+// import java.time.LocalTime;     // <- ELIMINADO
+// import java.time.format.DateTimeFormatter; // <- ELIMINADO
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,8 +30,9 @@ public class LlaveController {
     private final KeyMoveService keyMoveService;
     private final UsuarioRepository usuarioRepository;
 
-    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private final DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HHmm");
+    // --- FORMATEADORES ELIMINADOS ---
+    // private final DateTimeFormatter dtfFecha = ...
+    // private final DateTimeFormatter dtfHora = ...
 
     @Autowired
     public LlaveController(LlaveService llaveService, KeyMoveService keyMoveService, UsuarioRepository usuarioRepository) {
@@ -43,7 +41,7 @@ public class LlaveController {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // Método auxiliar para obtener el centro del usuario logueado
+    // Método auxiliar (sin cambios)
     private Integer getCentroUsuario(Authentication authentication) {
         String dni = authentication.getName();
         return usuarioRepository.findByUsuDni(dni)
@@ -53,31 +51,26 @@ public class LlaveController {
 
     /**
      * MUESTRA EL FORMULARIO PARA ENTREGAR UNA LLAVE
-     * Se activa con el botón: "Entrega de Llaves"
+     * (Sin cambios, la lógica de servicio fue refactorizada)
      */
     @GetMapping("/llaves/entrega")
     public String mostrarFormularioEntrega(Model model, Authentication authentication) {
         Integer centroUsuario = getCentroUsuario(authentication);
-
-        // 1. Obtener TODAS las llaves del centro
         List<Llave> todasLasLlavesDelCentro = llaveService.findByCentro(centroUsuario);
 
-        // 2. Obtener los CÓDIGOS de las llaves que ya están PRESTADAS
+        // Esta llamada ahora usa el servicio refactorizado (keyFechaHoraRecepcionDt IS NULL)
         List<String> codigosLlavesPrestadas = keyMoveService.findLlavesPrestadasPorCentro(centroUsuario)
                 .stream()
                 .map(KeyMove::getKeyLlvOrden)
                 .collect(Collectors.toList());
 
-        // 3. Filtrar la lista: mostrar solo llaves que NO están en la lista de prestadas
         List<Llave> llavesDisponibles = todasLasLlavesDelCentro.stream()
                 .filter(llave -> !codigosLlavesPrestadas.contains(llave.getLlvCodigo()))
                 .collect(Collectors.toList());
-
         KeyMove keyMove = new KeyMove();
-        keyMove.setKeyCentro(centroUsuario); // Asignamos el centro
-
+        keyMove.setKeyCentro(centroUsuario);
         model.addAttribute("keyMove", keyMove);
-        model.addAttribute("llavesDisponibles", llavesDisponibles); // Pasamos solo las disponibles
+        model.addAttribute("llavesDisponibles", llavesDisponibles);
         model.addAttribute("pageTitle", "Registrar Entrega de Llave");
         model.addAttribute("view", "vistas-formularios/form-entrega-llave");
         return "layouts/layout";
@@ -85,27 +78,27 @@ public class LlaveController {
 
     /**
      * GUARDA EL MOVIMIENTO DE ENTREGA DE LLAVE
-     * Se activa desde el formulario form-entrega-llave.html
+     * (¡ACTUALIZADO!)
      */
     @PostMapping("/llaves/guardar-entrega")
     public String guardarEntregaLlave(@ModelAttribute("keyMove") KeyMove keyMove, Authentication authentication) {
 
-        // Seguridad: Asegurarse de que el centro del movimiento es el del usuario
         Integer centroUsuario = getCentroUsuario(authentication);
         if (!keyMove.getKeyCentro().equals(centroUsuario)) {
             return "redirect:/panel?error=accesoDenegado";
         }
 
-        keyMove.setKeyFechaEntrega(LocalDate.now().format(dtfFecha));
-        keyMove.setKeyHoraEntrega(LocalTime.now().format(dtfHora));
+        // --- LÓGICA DE FECHA ACTUALIZADA ---
+        keyMove.setKeyFechaHoraEntregaDt(LocalDateTime.now());
+        // keyFechaHoraRecepcionDt permanece NULL
 
         keyMoveService.save(keyMove);
-        return "redirect:/panel"; // Vuelve al panel principal
+        return "redirect:/panel";
     }
 
     /**
      * MUESTRA LA LISTA DE LLAVES PRESTADAS (PARA RECOGER)
-     * Se activa con el botón: "Recogida de Llaves"
+     * (Sin cambios, la lógica de servicio fue refactorizada)
      */
     @GetMapping("/llaves/recogida")
     public String mostrarListaRecogida(Model model, Authentication authentication,
@@ -114,46 +107,42 @@ public class LlaveController {
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 7);
 
-        // Usamos el método paginado que filtra por centro
+        // Esta llamada ahora usa el servicio refactorizado (filtrado por 'hoy' y '...Dt')
         Page<KeyMove> llavesPage = keyMoveService.findLlavesPrestadasPorCentro(centroUsuario, pageable);
 
         model.addAttribute("llavesPage", llavesPage);
         model.addAttribute("pageTitle", "Registrar Recogida de Llave");
-
         int totalPaginas = llavesPage.getTotalPages();
         if (totalPaginas > 0) {
             List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
             model.addAttribute("numerosPagina", numerosPagina);
         }
-
         model.addAttribute("view", "vistas-listados/list-llaves-recogida");
         return "layouts/layout";
     }
 
     /**
      * REGISTRA LA RECOGIDA (DEVOLUCIÓN) DE UNA LLAVE
-     * Se activa desde el botón "Recoger" en la lista
+     * (¡ACTUALIZADO!)
      */
     @PostMapping("/llaves/registrar-recogida/{id}")
     public String registrarRecogida(@PathVariable("id") Integer id, Authentication authentication,
                                     @RequestParam(name = "page", defaultValue = "0") int page) {
 
         Integer centroUsuario = getCentroUsuario(authentication);
-
-        // Verificamos que el movimiento de llave sea de este centro
         KeyMove keyMove = keyMoveService.findByIdAndCentro(id, centroUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("ID de movimiento inválido o acceso denegado:" + id));
 
-        keyMove.setKeyFechaRecepcion(LocalDate.now().format(dtfFecha));
-        keyMove.setKeyHoraRecepcion(LocalTime.now().format(dtfHora));
+        // --- LÓGICA DE FECHA ACTUALIZADA ---
+        keyMove.setKeyFechaHoraRecepcionDt(LocalDateTime.now());
 
         keyMoveService.save(keyMove);
-        return "redirect:/llaves/recogida?page=" + page; // Vuelve a la misma página de la lista
+        return "redirect:/llaves/recogida?page=" + page;
     }
 
     /**
      * MUESTRA EL HISTÓRICO DE MOVIMIENTOS DE LLAVES
-     * Se activa con el botón: "Informes de Llaves"
+     * (Sin cambios)
      */
     @GetMapping("/llaves/informes")
     public String mostrarInformeLlaves(Model model, Authentication authentication,
@@ -161,19 +150,15 @@ public class LlaveController {
 
         Integer centroUsuario = getCentroUsuario(authentication);
         Pageable pageable = PageRequest.of(page, 7);
-
-        // Usamos el método paginado que filtra por centro
         Page<KeyMove> llavesPage = keyMoveService.findByCentro(centroUsuario, pageable);
 
         model.addAttribute("llavesPage", llavesPage);
         model.addAttribute("pageTitle", "Informe Movimientos de Llaves");
-
         int totalPaginas = llavesPage.getTotalPages();
         if (totalPaginas > 0) {
             List<Integer> numerosPagina = IntStream.rangeClosed(1, totalPaginas).map(i -> i - 1).boxed().collect(Collectors.toList());
             model.addAttribute("numerosPagina", numerosPagina);
         }
-
         model.addAttribute("view", "vistas-listados/list-llaves-informe");
         return "layouts/layout";
     }

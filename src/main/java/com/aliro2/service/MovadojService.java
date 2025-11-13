@@ -8,7 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,6 @@ import java.util.Optional;
 public class MovadojService {
 
     private final MovadojRepository movadojRepository;
-    private final DateTimeFormatter dtfFecha = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Autowired
     public MovadojService(MovadojRepository movadojRepository) {
@@ -25,20 +25,25 @@ public class MovadojService {
 
     // (Para /visitas/salida - Filtra por HOY y CENTRO)
     public Page<Movadoj> findVisitasActivas(String keyword, Integer movCentro, Pageable pageable) {
-        String fechaHoy = LocalDate.now().format(dtfFecha);
+        // Define el rango de "Hoy" (desde 00:00 hasta 23:59:59)
+        LocalDateTime inicioDelDia = LocalDate.now().atStartOfDay(); // Hoy a las 00:00
+        LocalDateTime finDelDia = LocalDate.now().atTime(LocalTime.MAX); // Hoy a las 23:59:59.999...
+
         if (keyword != null && !keyword.trim().isEmpty()) {
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(fechaHoy, movCentro, keyword, keyword, pageable);
+            return movadojRepository.findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovFechaHoraEntradaDtBetweenAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(
+                    movCentro, inicioDelDia, finDelDia, keyword, keyword, pageable);
         } else {
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovFechaEntradaEqualsAndMovCentroEqualsOrderByMovOrdenDesc(fechaHoy, movCentro, pageable);
+            return movadojRepository.findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovFechaHoraEntradaDtBetweenOrderByMovOrdenDesc(
+                    movCentro, inicioDelDia, finDelDia, pageable);
         }
     }
 
     // (Para /visitas/informes/general - Filtra TODAS las ACTIVAS por CENTRO)
     public Page<Movadoj> findTodasVisitasActivasPorCentro(String keyword, Integer movCentro, Pageable pageable) {
         if (keyword != null && !keyword.trim().isEmpty()) {
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(movCentro, keyword, keyword, pageable);
+            return movadojRepository.findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsAndMovNombreContainingIgnoreCaseOrMovApellidoUnoContainingIgnoreCaseOrderByMovOrdenDesc(movCentro, keyword, keyword, pageable);
         } else {
-            return movadojRepository.findByMovFechaSalidaIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro, pageable);
+            return movadojRepository.findByMovFechaHoraSalidaDtIsNullAndMovCentroEqualsOrderByMovOrdenDesc(movCentro, pageable);
         }
     }
 

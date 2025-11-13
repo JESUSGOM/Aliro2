@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-container h2 { text-align: center; margin-bottom: 25px; }
+        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+    </style>
+
+    <div class="form-container">
+        <h2 th:text="${pageTitle}">Gestión de Contacto</h2>
+
+        <form th:action="@{/mezua/guardar}" th:object="${mezua}" method="post">
+
+            <input type="hidden" th:field="*{mezId}" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nombre" class="form-label">Nombre (*)</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{mezNombre}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="apellidos" class="form-label">Apellidos (*)</label>
+                    <input type="text" class="form-control" id="apellidos" th:field="*{mezApellidos}" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email (*)</label>
+                <input type="email" class="form-control" id="email" th:field="*{mezEmail}" required>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/mezua/listado}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+                <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Contacto</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

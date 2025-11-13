@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <style>
+        .list-container { max-width: 1200px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .list-container h2 { text-align: center; margin-bottom: 25px; }
+        .pagination { justify-content: center; margin-top: 20px; }
+        .page-item .page-link { color: #28a745; }
+        .page-item.active .page-link { background-color: #28a745; border-color: #28a745; color: white; }
+    </style>
+
+    <div class="list-container">
+        <h2 th:text="${pageTitle}">Informe Histórico de Correspondencia</h2>
+        <a th:href="@{/panel}" class="btn btn-secondary mb-3">Volver al Panel</a>
+
+        <form th:action="@{${baseURL}}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="keyword" class="form-control" placeholder="Buscar por Remitente o Destinatario..." th:value="${keyword}">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </div>
+        </form>
+
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>Fecha/Hora Recepción</th>
+                <th>Remitente</th>
+                <th>Destinatario</th>
+                <th>Mensajería</th>
+                <th>Estado</th>
+                <th>Fecha/Hora Entrega</th>
+                <th>Entregado por</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${paquetesPage.empty}"><td colspan="7" class="text-center">No hay correspondencia registrada.</td></tr>
+            <tr th:each="pkt : ${paquetesPage.content}">
+                <td th:text="${#temporals.format(pkt.pktFechaHoraRecepcionDt, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${pkt.pktEmisor}"></td>
+                <td th:text="${pkt.pktDestinatario}"></td>
+                <td th:text="${pkt.pktMensajeria}"></td>
+                <td>
+                    <span th:if="${pkt.pktComunicado == 'Si'}" class="badge bg-success">Entregado</span>
+                    <span th:unless="${pkt.pktComunicado == 'Si'}" class="badge bg-warning">Pendiente</span>
+                </td>
+                <td th:text="${pkt.pktFechaHoraComunicaDt != null} ? ${#temporals.format(pkt.pktFechaHoraComunicaDt, 'dd/MM/yyyy HH:mm')} : '---'"></td>
+                <td th:text="${pkt.pktOperarioComunica ?: '---'}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="Paginación" th:if="${paquetesPage.totalPages > 0}">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${paquetesPage.isFirst()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{${baseURL}(page=${paquetesPage.number - 1}, keyword=${keyword})}">Anterior</a>
+                </li>
+                <li class="page-item" th:each="numero : ${numerosPagina}"
+                    th:classappend="${numero == paquetesPage.number} ? 'active' : ''">
+                    <a class.page-link" th:href="@{${baseURL}(page=${numero}, keyword=${keyword})}" th:text="${numero + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${paquetesPage.isLast()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{${baseURL}(page=${paquetesPage.number + 1}, keyword=${keyword})}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

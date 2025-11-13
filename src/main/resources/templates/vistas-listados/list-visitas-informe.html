@@ -29,26 +29,25 @@
                 <th>Nombre</th>
                 <th>Apellidos</th>
                 <th>Procedencia</th>
-                <th>Fecha Entrada</th>
-                <th>Hora Entrada</th>
-                <th>Fecha Salida</th>
-                <th>Hora Salida</th>
+                <th>Fecha/Hora Entrada</th>
+                <th>Fecha/Hora Salida</th>
                 <th>Acción</th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${visitasPage.empty}">
-                <td colspan="8" class="text-center">No se encontraron visitas.</td>
+                <td colspan="6" class="text-center">No se encontraron visitas.</td>
             </tr>
 
             <tr th:each="v : ${visitasPage.content}">
                 <td th:text="${v.movNombre}"></td>
                 <td th:text="|${v.movApellidoUno} ${v.movApellidoDos ?: ''}|"></td>
                 <td th:text="${v.movProcedencia}"></td>
-                <td th:text="${v.movFechaEntrada}"></td>
-                <td th:text="${v.movHoraEntrada}"></td>
-                <td th:text="${v.movFechaSalida ?: '---'}"></td>
-                <td th:text="${v.movHoraSalida ?: '---'}"></td>
+
+                <td th:text="${#temporals.format(v.movFechaHoraEntradaDt, 'dd/MM/yyyy HH:mm')}"></td>
+
+                <td th:text="${v.movFechaHoraSalidaDt != null} ? ${#temporals.format(v.movFechaHoraSalidaDt, 'dd/MM/yyyy HH:mm')} : '---'"></td>
+
                 <td>
                     <a th:href="@{/visitas/editar/{id}(id=${v.movOrden})}" class="btn btn-sm btn-primary">Editar</a>
                 </td>

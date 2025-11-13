@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-container h2 { text-align: center; margin-bottom: 25px; }
+        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+    </style>
+
+    <div class="form-container">
+        <h2 th:text="${pageTitle}">Registrar Entrada de Vehículo</h2>
+
+        <form th:action="@{/garaje/guardar}" th:object="${garaje}" method="post">
+
+            <input type="hidden" th:field="*{grjId}" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nombre" class="form-label">Nombre Conductor (*)</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{grjNombre}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="empresa" class="form-label">Empresa (*)</label>
+                    <input type="text" class="form-control" id="empresa" th:field="*{grjEmpresa}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="matricula" class="form-label">Matrícula (*)</label>
+                    <input type="text" class="form-control" id="matricula" th:field="*{grjMatricula}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="color" class="form-label">Color</label>
+                    <input type="text" class="form-control" id="color" th:field="*{grjColor}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="marca" class="form-label">Marca</label>
+                    <input type="text" class="form-control" id="marca" th:field="*{grjMarca}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="modelo" class="form-label">Modelo</label>
+                    <input type="text" class="form-control" id="modelo" th:field="*{grjModelo}">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/panel}" class="btn btn-secondary" style="width: 48%;">Cancelar</a>
+                <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Entrada</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

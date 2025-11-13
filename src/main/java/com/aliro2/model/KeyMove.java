@@ -2,6 +2,7 @@ package com.aliro2.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -25,6 +26,19 @@ public class KeyMove {
     @Column(name = "KeyHoraEntrega")
     private String keyHoraEntrega; // VARCHAR(6)
 
+    @Column(name = "KeyFechaRecepcion")
+    private String keyFechaRecepcion; // VARCHAR(8)
+
+    @Column(name = "KeyHoraRecepcion")
+    private String keyHoraRecepcion; // VARCHAR(6)
+
+    // --- NUEVOS CAMPOS (DATETIME) ---
+    @Column(name = "KeyFechaHoraEntrega_dt")
+    private LocalDateTime keyFechaHoraEntregaDt;
+
+    @Column(name = "KeyFechaHoraRecepcion_dt")
+    private LocalDateTime keyFechaHoraRecepcionDt;
+
     @Column(name = "KeyNombre")
     private String keyNombre;
 
@@ -33,12 +47,6 @@ public class KeyMove {
 
     @Column(name = "KeyApellidoDos")
     private String keyApellidoDos;
-
-    @Column(name = "KeyFechaRecepcion")
-    private String keyFechaRecepcion; // VARCHAR(8)
-
-    @Column(name = "KeyHoraRecepcion")
-    private String keyHoraRecepcion; // VARCHAR(6)
 
     public Integer getKeyOrden() {
         return keyOrden;
@@ -119,4 +127,14 @@ public class KeyMove {
     public void setKeyHoraRecepcion(String keyHoraRecepcion) {
         this.keyHoraRecepcion = keyHoraRecepcion;
     }
+
+    public LocalDateTime getKeyFechaHoraEntregaDt() {return keyFechaHoraEntregaDt;}
+
+    public void setKeyFechaHoraEntregaDt(LocalDateTime keyFechaHoraEntregaDt) {this.keyFechaHoraEntregaDt = keyFechaHoraEntregaDt;}
+
+    public LocalDateTime getKeyFechaHoraRecepcionDt() {return keyFechaHoraRecepcionDt;}
+
+    public void setKeyFechaHoraRecepcionDt(LocalDateTime keyFechaHoraRecepcionDt) {this.keyFechaHoraRecepcionDt = keyFechaHoraRecepcionDt;}
+
+
 }

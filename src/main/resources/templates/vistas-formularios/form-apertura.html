@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+  <style>
+    .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .form-container h2 { text-align: center; margin-bottom: 25px; }
+    .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+  </style>
+
+  <div class="form-container">
+    <h2 th:text="${pageTitle}">Gestión de Apertura Extraordinaria</h2>
+
+    <form th:action="@{/aperturas/guardar}" th:object="${apertura}" method="post">
+
+      <input type="hidden" th:field="*{aeId}" />
+      <input type="hidden" th:field="*{aeCentro}" />
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="fecha" class="form-label">Fecha (*)</label>
+          <input type="date" class="form-control" id="fecha" th:field="*{aeFecha}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="horaInicio" class="form-label">Hora Inicio (*)</label>
+          <input type="time" class="form-control" id="horaInicio" th:field="*{aeHoraInicio}" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="horaFinal" class="form-label">Hora Final (*)</label>
+          <input type="time" class="form-control" id="horaFinal" th:field="*{aeHoraFinal}" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="motivo" class="form-label">Motivo de la Apertura (*)</label>
+        <textarea class="form-control" id="motivo" rows="5" th:field="*{aeMotivo}" required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <a th:href="@{/aperturas/informes}" class="btn btn-secondary" style="width: 48%;">Cancelar y Volver</a>
+        <button type="submit" class="btn btn-success" style="width: 48%;">Guardar Registro</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

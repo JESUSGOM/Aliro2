@@ -1,43 +1,75 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
+
 <div th:fragment="content">
-    <style>
-        .form-container { max-width: 900px; margin: 0 auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .form-container h2 { text-align: center; margin-bottom: 25px; }
-        .form-actions { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
-    </style>
 
-    <div class="form-container">
-        <h2 th:text="${pageTitle}">Registrar Llamada</h2>
+    <script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
 
-        <form th:action="@{/llamadas/guardar}" th:object="${telefono}" method="post">
+    <div class="container p-4">
 
-            <input type="hidden" th:field="*{telId}" />
-            <input type="hidden" th:field="*{telCentro}" />
+        <div class="row">
+            <p>
+                <b>
+                    <span th:text="| ${centroDen} Usuario-> ${estaidentificacion} ${apellidoUno} ${apellidoDos}, ${nombre}|">
+                        Cargando datos de usuario...
+                    </span>
+                </b>
+            </p>
+        </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="emisor" class="form-label">Emisor de la llamada (*)</label>
-                    <input type="text" class="form-control" id="emisor" th:field="*{telEmisor}" placeholder="Nombre de quien llama" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="destinatario" class="form-label">Destinatario (*)</label>
-                    <input type="text" class="form-control" id="destinatario" th:field="*{telDestinatario}" placeholder="Nombre del destinatario" required>
-                </div>
+        <div class="row">
+            <div class="card card-body">
+
+                <form th:action="@{/llamadas/guardar}" th:object="${nuevaLlamada}" method="POST" class="form">
+
+                    <div class="form-group mx-sm-3">
+                        <input type="hidden" name="apu" th:value="${apellidoUno}"/>
+                        <input type="hidden" name="apd" th:value="${apellidoDos}"/>
+                        <input type="hidden" name="nom" th:value="${nombre}"/>
+                        <input type="hidden" name="cen" th:value="${centroDen}"/>
+                        <input type="hidden" name="num" th:value="${numero}"/>
+                        <input type="hidden" name="ide" th:value="${identifico}"/>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" th:field="*{telEmisor}" class="form-control"
+                               placeholder="Quien llama" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" th:field="*{telReceptor}" class="form-control"
+                               placeholder="A quién llama" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea th:field="*{telMensaje}" class="form-control"
+                                  placeholder="Mensaje"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <select th:field="*{emilio}" class="form-control" size="1">
+                            <option value="sincorreo">Elige persona (opcional para email)</option>
+                            <option th:each="persona : ${listaPersonas}"
+                                    th:value="|${persona.getNombreCompleto()} | ${persona.rptEmail}|"
+                                    th:text="${persona.getNombreCompleto()}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success btn-block" value="Guardar y Enviar">
+                    </div>
+                </form>
             </div>
 
-            <div class="mb-3">
-                <label for="mensaje" class="form-label">Mensaje (*)</label>
-                <textarea class="form-control" id="mensaje" rows="4" th:field="*{telMensaje}" placeholder="Mensaje de la llamada" required></textarea>
+            <div class="card card-body mt-2">
+                <input style="background-color: #489F48; font-weight:bold;" type="button"
+                       class="btn btn-secondary"
+                       onclick="history.back()" value="Página anterior">
             </div>
+        </div>
+        <br>
 
-            <div class.form-actions">
-            <a th:href="@{/panel}" class="btn btn-secondary" style="width: 48%;">Cancelar</a>
-            <button type="submit" class="btn btn-success" style="width: 48%;">Grabar Llamada</button>
     </div>
-    </form>
-</div>
-</div>
-</body>
+
+</div> </body>
 </html>
